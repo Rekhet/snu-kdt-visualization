@@ -1,0 +1,74 @@
+import React, { useState } from 'react';
+import { HashRouter as Router, Routes, Route } from 'react-router-dom';
+import Header from './components/Header';
+import Footer from './components/Footer';
+import Home from './pages/Home';
+import Settings from './pages/Settings';
+import OrganDetail from './pages/OrganDetail';
+
+export default function App() {
+  const [selectedId, setSelectedId] = useState(null);
+  const [resetTrigger, setResetTrigger] = useState(0);
+  const [zoomLevel, setZoomLevel] = useState(1);
+  
+  // Initialize from localStorage (default to true if not found)
+  const [showWireframe, setShowWireframe] = useState(() => {
+    const saved = localStorage.getItem('showWireframe');
+    return saved !== 'false'; // 'true' or null (default) returns true
+  });
+
+  // Persist to localStorage
+  React.useEffect(() => {
+    localStorage.setItem('showWireframe', showWireframe);
+  }, [showWireframe]);
+
+  // Handler for clicking the model via Search or interaction
+  const handlePartSelect = (id) => {
+    // Single click selects and resets zoom to normal fit
+    if (id !== selectedId) {
+       setSelectedId(id);
+       setZoomLevel(1);
+    }
+  };
+
+  // Handler for resetting
+  const handleReset = () => {
+    setSelectedId(null);
+    setZoomLevel(1);
+    setResetTrigger(prev => prev + 1); 
+  };
+
+  return (
+    <Router>
+        <div className="flex flex-col w-full h-full bg-gray-50 overflow-hidden">
+        
+        {/* Header */}
+        <Header onSearchSelect={handlePartSelect} />
+
+        <Routes>
+            <Route path="/" element={
+                <Home 
+                    selectedId={selectedId}
+                    onSelect={handlePartSelect}
+                    resetTrigger={resetTrigger}
+                    onReset={handleReset}
+                    zoomLevel={zoomLevel}
+                    setZoomLevel={setZoomLevel}
+                    showWireframe={showWireframe}
+                />
+            } />
+            <Route path="/settings" element={
+                <Settings 
+                    showWireframe={showWireframe}
+                    setShowWireframe={setShowWireframe}
+                />
+            } />
+            <Route path="/organ/:organId" element={<OrganDetail />} />
+        </Routes>
+
+        {/* Footer */}
+        <Footer />
+        </div>
+    </Router>
+  );
+}
