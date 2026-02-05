@@ -90,6 +90,9 @@ const ScrollScene = ({ interactionMode, modelGroupRef, setGridProgress }) => {
 
     // B. Hero Model Animation (Always runs so world reflects scroll state)
     if (modelGroupRef.current) {
+        // Explicitly hide if not in reveal or later phases to prevent "remote point" flicker
+        modelGroupRef.current.visible = revealP > 0;
+
         if (gridP > 0) {
             // Migrating to Grid
             // Scale: 1 -> 0.5
@@ -198,6 +201,7 @@ export default function Home({
   const [titleOpacity, setTitleOpacity] = useState(1);
   const [gridProgress, setGridProgress] = useState(0);
   const [chartProgress, setChartProgress] = useState(0);
+  const [progress, setProgress] = useState(0);
   
   const modelGroupRef = useRef();
   const { theme } = useTheme();
@@ -245,17 +249,18 @@ export default function Home({
     const handleScroll = () => {
       const scrollY = window.scrollY;
       const threshold = window.innerHeight * SCROLL_CONFIG.thresholdFactor;
-      const progress = Math.min(scrollY / threshold, 1);
+      const currentProgress = Math.min(scrollY / threshold, 1);
+      setProgress(currentProgress);
       
-      const fadeProgress = getPhaseProgress(progress, SCROLL_CONFIG.phases.EVENT_TITLE);
+      const fadeProgress = getPhaseProgress(currentProgress, SCROLL_CONFIG.phases.EVENT_TITLE);
       setTitleOpacity(1 - fadeProgress);
 
       // Chart Race Progress
-      const chartP = getPhaseProgress(progress, SCROLL_CONFIG.phases.EVENT_CHART_RACE);
+      const chartP = getPhaseProgress(currentProgress, SCROLL_CONFIG.phases.EVENT_CHART_RACE);
       setChartProgress(chartP);
 
       // Check if we are in the Single View Zone (Moved from ScrollScene)
-      const inZone = progress > SCROLL_CONFIG.phases.EVENT_MODEL_INTERACT.start && progress < SCROLL_CONFIG.phases.EVENT_MODEL_INTERACT.end;
+      const inZone = currentProgress > SCROLL_CONFIG.phases.EVENT_MODEL_INTERACT.start && currentProgress < SCROLL_CONFIG.phases.EVENT_MODEL_INTERACT.end;
       setIsInScrollZone(inZone);
     };
     
@@ -272,6 +277,9 @@ export default function Home({
 
   // Visibility logic: Show UI if Interacting OR if in the view zone
   const showUI = interactionMode || isInScrollZone;
+
+  // The floating button should be hidden during the intro and chart race
+  const isButtonHidden = progress < SCROLL_CONFIG.phases.EVENT_CHART_RACE.end || interactionMode || isInScrollZone;
 
   return (
       <main className="relative w-full">
@@ -372,7 +380,7 @@ export default function Home({
                 Here `isLocked` roughly maps to `isInScrollZone`.
                 If I pass `interactionMode || isInScrollZone` as `isLocked` to the button, it will hide when in zone.
             */}
-            <FloatingScrollButton isLocked={interactionMode || isInScrollZone} />
+            <FloatingScrollButton isLocked={isButtonHidden} />
 
             {/* Chart Race Section Overlay */}
             <div 

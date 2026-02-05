@@ -12,7 +12,7 @@ const FloatingScrollButton = ({ isLocked }) => {
       const progress = scrollY / threshold;
       
       // If we are past the single view phase, point UP
-      if (progress > SCROLL_CONFIG.phases.singleView.end) {
+      if (progress > SCROLL_CONFIG.phases.EVENT_MODEL_INTERACT.end) {
         setDirection('up');
       } else {
         setDirection('down');
@@ -25,7 +25,7 @@ const FloatingScrollButton = ({ isLocked }) => {
   }, []);
 
   const handleClick = () => {
-    const targetPhase = (SCROLL_CONFIG.phases.singleView.start + SCROLL_CONFIG.phases.singleView.end) / 2;
+    const targetPhase = (SCROLL_CONFIG.phases.EVENT_MODEL_INTERACT.start + SCROLL_CONFIG.phases.EVENT_MODEL_INTERACT.end) / 2;
     const threshold = window.innerHeight * SCROLL_CONFIG.thresholdFactor;
     const targetScrollY = threshold * targetPhase;
     
