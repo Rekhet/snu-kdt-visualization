@@ -8,7 +8,6 @@ const VideoSection = ({ progress, src, visible }) => {
     if (!video) return;
 
     if (visible) {
-      // Reload and play when coming into view
       video.load(); 
       const playPromise = video.play();
       if (playPromise !== undefined) {
@@ -34,25 +33,25 @@ const VideoSection = ({ progress, src, visible }) => {
         zIndex: 90, 
       }}
     >
-      {/* DEBUG PLACEHOLDER: Replace video with red box */}
-      <div className="w-full h-full bg-red-600 flex flex-col items-center justify-center text-white p-10 text-center">
-        <h2 className="text-4xl font-black mb-4">VIDEO DEBUG PLACEHOLDER</h2>
-        <p className="text-xl">This red area represents the Video Section.</p>
-        <p className="mt-2 font-mono bg-black/20 px-4 py-2 rounded">
-            Visible: {visible ? 'TRUE' : 'FALSE'} | Progress: {progress.toFixed(2)}
-        </p>
-        
-        {/* Hidden video element still exists for logic testing */}
-        <video
-            ref={videoRef}
-            muted
-            loop
-            playsInline
-            autoPlay
-            className="hidden"
-        >
-            <source src={src} type="video/mp4" />
-        </video>
+      <video
+        ref={videoRef}
+        muted
+        loop
+        playsInline
+        autoPlay
+        className="w-full h-full object-contain"
+        style={{ 
+            backgroundColor: '#050505',
+            // Temporary border to confirm video element bounds
+            border: '2px solid #fbbf24' 
+        }}
+      >
+        <source src={src} type="video/mp4" />
+      </video>
+      
+      {/* Visual hint that the element is here */}
+      <div className="absolute bottom-10 left-1/2 -translate-x-1/2 text-white/20 text-[10px] font-mono uppercase tracking-widest">
+        Video Element Active | {src}
       </div>
     </div>
   );
