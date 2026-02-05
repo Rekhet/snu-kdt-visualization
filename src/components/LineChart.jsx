@@ -1,5 +1,6 @@
 import React, { useRef, useEffect } from 'react';
 import * as d3 from 'd3';
+import { useTheme } from '../context/ThemeContext';
 
 const LineChart = ({ 
     data, 
@@ -17,6 +18,10 @@ const LineChart = ({
 }) => {
   const svgRef = useRef(null);
   const tooltipRef = useRef(null);
+  const { theme } = useTheme();
+  
+  const isDarkMode = theme === 'dark' || (theme === 'system' && window.matchMedia('(prefers-color-scheme: dark)').matches);
+  const textColor = isDarkMode ? '#e2e8f0' : '#475569'; // Slate-200 vs Slate-600
 
   useEffect(() => {
     const renderChart = (chartData) => {
@@ -61,13 +66,19 @@ const LineChart = ({
         .range([innerHeight, 0]);
 
         // Add X axis
-        svg.append("g")
+        const xAxis = svg.append("g")
         .attr("transform", `translate(0,${innerHeight})`)
         .call(d3.axisBottom(x));
+        
+        xAxis.selectAll("text").style("fill", textColor);
+        xAxis.selectAll("line, .domain").style("stroke", textColor).style("opacity", 0.3);
 
         // Add Y axis
-        svg.append("g")
+        const yAxis = svg.append("g")
         .call(d3.axisLeft(y));
+
+        yAxis.selectAll("text").style("fill", textColor);
+        yAxis.selectAll("line, .domain").style("stroke", textColor).style("opacity", 0.3);
 
         // Line generator
         const line = d3.line()
@@ -230,7 +241,7 @@ const LineChart = ({
         renderChart(filteredData);
     }
 
-  }, [data, dataUrl, width, height, margin, reloadTrigger, headerRowIndex, dataRowIndex, xColumnIndex, seriesStartColumnIndex, selectedSeries]);
+  }, [data, dataUrl, width, height, margin, reloadTrigger, headerRowIndex, dataRowIndex, xColumnIndex, seriesStartColumnIndex, selectedSeries, theme, textColor]);
 
   return (
     <>

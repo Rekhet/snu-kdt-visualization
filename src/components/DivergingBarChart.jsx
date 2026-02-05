@@ -1,5 +1,6 @@
 import React, { useRef, useEffect } from 'react';
 import * as d3 from 'd3';
+import { useTheme } from '../context/ThemeContext';
 
 const DivergingBarChart = ({ 
     data, 
@@ -11,6 +12,10 @@ const DivergingBarChart = ({
     highlightLabel = null // Optional: highlight this label
 }) => {
   const svgRef = useRef(null);
+  const { theme } = useTheme();
+  
+  const isDarkMode = theme === 'dark' || (theme === 'system' && window.matchMedia('(prefers-color-scheme: dark)').matches);
+  const textColor = isDarkMode ? '#e2e8f0' : '#475569';
 
   useEffect(() => {
     const renderChart = (chartData) => {
@@ -42,9 +47,12 @@ const DivergingBarChart = ({
         .padding(0.2);
 
         // Add X axis
-        svg.append("g")
+        const xAxis = svg.append("g")
         .attr("transform", `translate(0, ${innerHeight})`)
         .call(d3.axisBottom(x).tickFormat(d3.format("+.0%")));
+        
+        xAxis.selectAll("text").style("fill", textColor);
+        xAxis.selectAll("line, .domain").style("stroke", textColor).style("opacity", 0.3);
 
         // Add Y axis (The "middle" vertical axis)
         // We want a line at x=0
@@ -53,15 +61,18 @@ const DivergingBarChart = ({
             .attr("x2", x(0))
             .attr("y1", 0)
             .attr("y2", innerHeight)
-            .attr("stroke", "#4b5563") // Gray-600
+            .attr("stroke", textColor) // Gray-600
             .attr("stroke-width", 1)
-            .attr("stroke-dasharray", "4");
+            .attr("stroke-dasharray", "4")
+            .style("opacity", 0.5);
 
         // Add Category Labels on the left (or intelligently placed)
         // Standard left axis for readability
-        svg.append("g")
-        .call(d3.axisLeft(y).tickSize(0))
-        .select(".domain").remove();
+        const yAxis = svg.append("g")
+        .call(d3.axisLeft(y).tickSize(0));
+        
+        yAxis.select(".domain").remove();
+        yAxis.selectAll("text").style("fill", textColor);
         
         // Animation Duration
         const animDuration = 1000;
@@ -81,7 +92,7 @@ const DivergingBarChart = ({
             }
             return d.value > 0 ? "#10b98188" : "#ef444488"; // Semi-transparent if not highlighted
         })
-        .attr("stroke", d => (highlightLabel && d.label.toLowerCase() === highlightLabel.toLowerCase()) ? "white" : "none")
+        .attr("stroke", d => (highlightLabel && d.label.toLowerCase() === highlightLabel.toLowerCase()) ? (isDarkMode ? "white" : "#1e293b") : "none")
         .attr("stroke-width", 2)
         .transition()
         .duration(animDuration)
@@ -99,7 +110,7 @@ const DivergingBarChart = ({
             .attr("dy", "0.35em")
             .attr("text-anchor", d => d.value < 0 ? "end" : "start")
             .text(d => d3.format("+.1%")(d.value))
-            .style("fill", "#9ca3af") // Gray-400
+            .style("fill", textColor) // Gray-400
             .style("font-size", "10px")
             .style("opacity", 0)
             .transition()
@@ -121,7 +132,7 @@ const DivergingBarChart = ({
         renderChart(data);
     }
 
-  }, [data, dataUrl, width, height, margin, reloadTrigger, highlightLabel]);
+  }, [data, dataUrl, width, height, margin, reloadTrigger, highlightLabel, theme, textColor, isDarkMode]);
 
   return (
     <svg ref={svgRef}></svg>

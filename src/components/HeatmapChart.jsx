@@ -1,5 +1,6 @@
 import React, { useRef, useEffect } from 'react';
 import * as d3 from 'd3';
+import { useTheme } from '../context/ThemeContext';
 
 const HeatmapChart = ({ 
     data, 
@@ -11,6 +12,10 @@ const HeatmapChart = ({
     selectedY = null // Optional: filter to show only this Y-axis value (organ)
 }) => {
   const svgRef = useRef(null);
+  const { theme } = useTheme();
+  
+  const isDarkMode = theme === 'dark' || (theme === 'system' && window.matchMedia('(prefers-color-scheme: dark)').matches);
+  const textColor = isDarkMode ? '#e2e8f0' : '#475569';
 
   useEffect(() => {
     const renderChart = (chartData) => {
@@ -59,13 +64,17 @@ const HeatmapChart = ({
         .style("opacity", 0);
         
         xAxis.select(".domain").remove();
-        xAxis.selectAll("text").attr("transform", "translate(-10,0)rotate(-45)").style("text-anchor", "end");
+        xAxis.selectAll("text")
+            .attr("transform", "translate(-10,0)rotate(-45)")
+            .style("text-anchor", "end")
+            .style("fill", textColor);
 
         const yAxis = svg.append("g")
         .call(d3.axisLeft(y).tickSize(0))
         .style("opacity", 0);
         
         yAxis.select(".domain").remove();
+        yAxis.selectAll("text").style("fill", textColor);
 
         // Animation variables
         const axisDuration = 1000;
@@ -135,7 +144,7 @@ const HeatmapChart = ({
         renderChart(filteredData);
     }
     
-  }, [data, dataUrl, width, height, margin, reloadTrigger, selectedY]);
+  }, [data, dataUrl, width, height, margin, reloadTrigger, selectedY, theme, textColor]);
 
   return (
     <svg ref={svgRef}></svg>

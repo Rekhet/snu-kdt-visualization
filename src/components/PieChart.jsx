@@ -1,8 +1,13 @@
 import React, { useRef, useEffect } from 'react';
 import * as d3 from 'd3';
+import { useTheme } from '../context/ThemeContext';
 
 const PieChart = ({ data, dataUrl, width = 400, height = 400, reloadTrigger = 0 }) => {
   const svgRef = useRef(null);
+  const { theme } = useTheme();
+  
+  const isDarkMode = theme === 'dark' || (theme === 'system' && window.matchMedia('(prefers-color-scheme: dark)').matches);
+  const textColor = isDarkMode ? '#e2e8f0' : '#475569';
 
   useEffect(() => {
     const renderChart = (chartData) => {
@@ -102,7 +107,7 @@ const PieChart = ({ data, dataUrl, width = 400, height = 400, reloadTrigger = 0 
         .attr("dy", "0.35em")
         .attr("text-anchor", "middle")
         .text(d => d.label)
-        .style("fill", "white")
+        .style("fill", textColor)
         .style("font-size", "11px")
         .style("font-weight", "bold")
         .style("opacity", 0)
@@ -128,7 +133,7 @@ const PieChart = ({ data, dataUrl, width = 400, height = 400, reloadTrigger = 0 
         renderChart(data);
     }
 
-  }, [data, dataUrl, width, height, reloadTrigger]);
+  }, [data, dataUrl, width, height, reloadTrigger, theme, textColor]);
 
   return (
     <svg ref={svgRef}></svg>

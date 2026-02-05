@@ -1,5 +1,6 @@
 import React, { useRef, useEffect, useState } from 'react';
 import * as d3 from 'd3';
+import { useTheme } from '../context/ThemeContext';
 
 const BarChartRace = ({ 
     width = 800, 
@@ -12,6 +13,10 @@ const BarChartRace = ({
   const [data, setData] = useState(null);
   const [years, setYears] = useState([]);
   const [colorMap, setColorMap] = useState({});
+  const { theme } = useTheme();
+  
+  const isDarkMode = theme === 'dark' || (theme === 'system' && window.matchMedia('(prefers-color-scheme: dark)').matches);
+  const textColor = isDarkMode ? '#e2e8f0' : '#475569';
 
   // 1. Load Data
   useEffect(() => {
@@ -127,7 +132,7 @@ const BarChartRace = ({
         .text(d => d.label)
         .style("font-size", "11px") // Slightly smaller font for more bars
         .style("font-weight", "bold")
-        .style("fill", "#e5e7eb"); 
+        .style("fill", textColor); 
 
     // Labels (Value)
     g.selectAll(".label-value")
@@ -139,7 +144,7 @@ const BarChartRace = ({
         .attr("dy", "0.35em")
         .text(d => Math.round(d.value).toLocaleString())
         .style("font-size", "11px")
-        .style("fill", "#9ca3af"); 
+        .style("fill", isDarkMode ? "#9ca3af" : "#64748b"); 
 
     // Year Label
     const displayYear = Math.floor(years[0] + effectiveProgress * (years[years.length-1] - years[0]));
@@ -149,11 +154,11 @@ const BarChartRace = ({
         .attr("text-anchor", "end")
         .style("font-size", "48px")
         .style("font-weight", "bold")
-        .style("fill", "#6b7280") 
-        .style("opacity", 0.5)
+        .style("fill", textColor) 
+        .style("opacity", 0.3)
         .text(displayYear);
 
-  }, [data, years, progress, width, height, margin, colorMap]);
+  }, [data, years, progress, width, height, margin, colorMap, theme, textColor, isDarkMode]);
 
   if (!visible || progress >= 1 || progress <= 0) return null;
 
