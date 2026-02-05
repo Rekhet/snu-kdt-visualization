@@ -8,8 +8,8 @@ const VideoSection = ({ progress, src, visible }) => {
     if (!video) return;
 
     if (visible) {
-      // Ensure it starts from beginning and plays
-      video.currentTime = 0;
+      // Reload and play when coming into view
+      video.load(); 
       const playPromise = video.play();
       if (playPromise !== undefined) {
         playPromise.catch(err => {
@@ -21,32 +21,32 @@ const VideoSection = ({ progress, src, visible }) => {
     }
   }, [visible]);
 
-  // Smoother fade logic based on the 0-1 progress of this specific phase
-  const opacity = progress < 0.1 
-    ? progress * 10 
-    : progress > 0.9 
-    ? (1 - progress) * 10 
+  // Fade out only at the very end of the phase (last 5%)
+  const opacity = progress > 0.95 
+    ? (1 - progress) * 20 
     : 1;
 
   return (
     <div 
-      className={`fixed inset-0 flex items-center justify-center bg-black transition-opacity duration-500 pointer-events-none`}
+      className="fixed top-16 inset-x-0 bottom-0 flex items-center justify-center bg-black transition-opacity duration-300 pointer-events-none"
       style={{ 
         opacity: visible ? Math.max(0, Math.min(1, opacity)) : 0,
-        zIndex: 45, 
+        zIndex: 50, // Ensure it's above the Canvas (z-10) and Chart Race (z-30)
         visibility: (visible && opacity > 0.01) ? 'visible' : 'hidden'
       }}
     >
       <video
         ref={videoRef}
-        src={src}
         muted
         loop
         playsInline
         autoPlay
         className="w-full h-full object-contain"
         style={{ backgroundColor: 'black' }}
-      />
+      >
+        <source src={src} type="video/mp4" />
+        Your browser does not support the video tag.
+      </video>
     </div>
   );
 };
