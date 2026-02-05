@@ -1,0 +1,16 @@
+{
+  "projectId": "prj_cIo553MJxL19t70OcHN51V2nWkNX",
+  "orgId": "team_SV43HZ74ALVWR4AQ43CcbIeX",
+  "projectName": "snukdt-viz",
+  "settings": {
+    "createdAt": 1770276486246,
+    "framework": "vite",
+    "devCommand": "vite",
+    "installCommand": "npm install",
+    "buildCommand": "vite build",
+    "outputDirectory": ".vercel/",
+    "rootDirectory": null,
+    "directoryListing": false,
+    "nodeVersion": "24.x"
+  }
+}
