@@ -11,46 +11,41 @@ const BarChartRace = ({
   const svgRef = useRef(null);
   const [data, setData] = useState(null);
   const [years, setYears] = useState([]);
+  const [colorMap, setColorMap] = useState({});
 
   // 1. Load Data
   useEffect(() => {
     d3.csv("/data/death_cause_num.csv").then(() => {
-      // Structure is unique. Headers are on row 1 (index 0 for d3.csv if headers lines up)
-      // But file has 3 header rows essentially. 
-      // Actually d3.csv parses the first row as header.
-      // Let's look at raw data again.
-      // Row 0: "사망원인별(237항목)","성별","연령(5세)별",1983,1984...
-      // Row 1: ... "사망자수 (명)" ...
-      
-      // We need to be careful parsing. 
-      // Let's use d3.text to parse manually to be safe.
       return d3.text("/data/death_cause_num.csv");
     }).then(text => {
       const rows = d3.csvParseRows(text);
       
-      // Row 0 has years from index 3
       const yearRow = rows[0];
       const extractedYears = yearRow.slice(3).map(y => +y);
       setYears(extractedYears);
 
-      // Filter for Cancer rows
-      // Identify rows where col 0 contains "(C" but NOT "(C00-C97)" (Total)
       const cancerRows = rows.slice(2).filter(r => {
         const label = r[0];
         return label && label.includes("(C") && !label.includes("(C00-C97)");
       });
 
-      // Format data: { label: "Stomach Cancer", values: [12000, 12100, ...] }
       const formatted = cancerRows.map(row => {
-        const label = row[0].split("(")[0].trim(); // Extract simplified name "위의 악성신생물"
+        const label = row[0].split("(")[0].trim(); 
         const values = row.slice(3).map(v => {
-            const num = +v.replace(/,/g, ''); // Remove commas
+            const num = +v.replace(/,/g, ''); 
             return isNaN(num) ? 0 : num;
         });
         return { label, values };
       });
       
       setData(formatted);
+
+      // Create stable color map
+      const allLabels = formatted.map(d => d.label);
+      const scale = d3.scaleOrdinal(d3.schemeTableau10).domain(allLabels);
+      const map = {};
+      allLabels.forEach(l => map[l] = scale(l));
+      setColorMap(map);
     });
   }, []);
 
@@ -58,7 +53,14 @@ const BarChartRace = ({
   useEffect(() => {
     if (!data || !years.length || !svgRef.current) return;
 
-    const currentYearIndexFloat = progress * (years.length - 1);
+    // Pause Logic: Hold start for 10%, Hold end for 10%
+    const PAUSE = 0.1; 
+    let effectiveProgress = 0;
+    if (progress < PAUSE) effectiveProgress = 0;
+    else if (progress > 1 - PAUSE) effectiveProgress = 1;
+    else effectiveProgress = (progress - PAUSE) / (1 - 2 * PAUSE);
+
+    const currentYearIndexFloat = effectiveProgress * (years.length - 1);
     const indexFloor = Math.floor(currentYearIndexFloat);
     const indexCeil = Math.ceil(currentYearIndexFloat);
     const remainder = currentYearIndexFloat - indexFloor;
@@ -71,27 +73,15 @@ const BarChartRace = ({
         return {
             label: d.label,
             value: interpolated,
-            color: d.color // We can assign colors later
+            color: colorMap[d.label] || "#ccc" // Use stable color
         };
     })
-    .sort((a, b) => b.value - a.value) // Sort descending
-    .slice(0, 10); // Top 10
-
-    // Assign consistent colors (hash based or mapped)
-    // We want stable colors. 
-    // Let's use a scale outside this effect or just hash string to color index
-    const colorScale = d3.scaleOrdinal(d3.schemeTableau10);
-    currentData.forEach(d => d.color = colorScale(d.label));
+    .sort((a, b) => b.value - a.value) 
+    .slice(0, 10); 
 
     // D3 Render Logic
     const svg = d3.select(svgRef.current);
-    svg.selectAll("*").remove(); // Ideally we use join for smooth transitions, 
-    // but for scroll-scrubbing (high freq updates), simple redraw might flicker if not careful.
-    // However, recreating elements every frame is bad for performance.
-    // Let's try to stick to React for DOM or use D3 update pattern properly.
-    
-    // Actually, for a chart race with scrolling, we want smooth element movement.
-    // Re-rendering SVG on every scroll frame is OK if count is low (10 bars).
+    svg.selectAll("*").remove(); 
     
     const innerWidth = width - margin.left - margin.right;
     const innerHeight = height - margin.top - margin.bottom;
@@ -109,12 +99,7 @@ const BarChartRace = ({
 
     // Bars
     g.selectAll("rect")
-        .data(currentData, d => d.label) // Key by label for object constancy? 
-        // Note: For scroll scrubbing, we might just render by index if we sort them.
-        // But true chart race has bars swapping positions.
-        // If we clear and redraw sorted data, they just snap to new positions. 
-        // For scrubbing, "snapping" to sorted order every frame is what we want. 
-        // The "animation" is the user scrolling.
+        .data(currentData, d => d.label) 
         .join("rect")
         .attr("x", x(0))
         .attr("y", (d, i) => y(i))
@@ -125,7 +110,7 @@ const BarChartRace = ({
 
     // Labels (Name)
     g.selectAll(".label-name")
-        .data(currentData)
+        .data(currentData, d => d.label) // Key by label
         .join("text")
         .attr("class", "label-name")
         .attr("x", -10)
@@ -135,11 +120,11 @@ const BarChartRace = ({
         .text(d => d.label)
         .style("font-size", "12px")
         .style("font-weight", "bold")
-        .style("fill", "#e5e7eb"); // Tailwind gray-200
+        .style("fill", "#e5e7eb"); 
 
     // Labels (Value)
     g.selectAll(".label-value")
-        .data(currentData)
+        .data(currentData, d => d.label)
         .join("text")
         .attr("class", "label-value")
         .attr("x", d => x(d.value) + 5)
@@ -147,32 +132,35 @@ const BarChartRace = ({
         .attr("dy", "0.35em")
         .text(d => Math.round(d.value).toLocaleString())
         .style("font-size", "12px")
-        .style("fill", "#9ca3af"); // Tailwind gray-400
+        .style("fill", "#9ca3af"); 
 
     // Year Label
+    const displayYear = Math.floor(years[0] + effectiveProgress * (years[years.length-1] - years[0]));
     g.append("text")
         .attr("x", innerWidth)
         .attr("y", innerHeight - 20)
         .attr("text-anchor", "end")
         .style("font-size", "48px")
         .style("font-weight", "bold")
-        .style("fill", "#6b7280") // Gray 500
+        .style("fill", "#6b7280") 
         .style("opacity", 0.5)
-        .text(Math.floor(years[indexFloor] + remainder)); // Show decimal year? Or just integer.
-        // Math.floor(years[indexFloor] + remainder) -> just indexFloor year? 
-        // Let's show integer year.
-        // .text(years[indexFloor]); 
+        .text(displayYear);
 
-  }, [data, years, progress, width, height, margin]);
+  }, [data, years, progress, width, height, margin, colorMap]);
 
   if (!visible || progress >= 1 || progress <= 0) return null;
+
+  // Calculate display year for header outside of D3 logic
+  const displayYearHeader = years.length > 0 
+     ? Math.floor(years[0] + (progress < 0.1 ? 0 : progress > 0.9 ? 1 : (progress - 0.1) / 0.8) * (years[years.length-1] - years[0]))
+     : "";
 
   return (
     <div className="bg-panel-bg/80 backdrop-blur-md border border-panel-border rounded-xl p-6 shadow-2xl">
         <h3 className="text-xl font-bold text-text-main mb-4 flex justify-between items-center">
             <span>Leading Causes of Cancer Death</span>
             <span className="text-brand text-2xl font-mono">
-                {years.length > 0 && Math.floor(years[0] + progress * (years[years.length-1] - years[0]))}
+                {displayYearHeader}
             </span>
         </h3>
         <svg ref={svgRef} width={width} height={height} className="block"></svg>
