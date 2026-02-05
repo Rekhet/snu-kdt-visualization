@@ -93,22 +93,20 @@ const ScrollScene = ({ interactionMode, modelGroupRef, setGridProgress }) => {
         // Explicitly hide if not in reveal or later phases to prevent "remote point" flicker
         modelGroupRef.current.visible = revealP > 0;
 
+        // Apply scale (revealScale handles 0->1, stays 1.0 during grid phase)
+        // Keep at 1.0 during grid to match PopulationGrid's world scale (0.5)
+        modelGroupRef.current.scale.set(revealScale, revealScale, revealScale);
+
         if (gridP > 0) {
-            // Migrating to Grid
-            // Scale: 1 -> 0.5
-            const s = 1 - (gridEase * 0.5);
-            modelGroupRef.current.scale.set(s, s, s);
-            
-            // Pos: Center -> Grid Slot
+            // Migrating to Grid Position (Y stays at -1, X/Z lerp to slot)
             modelGroupRef.current.position.lerpVectors(heroStartPos, heroGridPos, gridEase);
             
             // Reset rotation to face forward for grid
             modelGroupRef.current.rotation.y = 0;
         } else {
-            // Revealing
-            modelGroupRef.current.scale.set(revealScale, revealScale, revealScale);
+            // Intro Reveal State
             modelGroupRef.current.position.copy(heroStartPos);
-            // Spin in
+            // Spin in based on reveal progress
             modelGroupRef.current.rotation.y = (1 - revealScale) * Math.PI * 0.5;
         }
     }
