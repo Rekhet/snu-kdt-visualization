@@ -75,7 +75,7 @@ export default function Charts() {
   ]);
 
   return (
-    <div className="flex-1 w-full h-full bg-app-bg p-8 overflow-y-auto transition-colors duration-200">
+    <div className="flex-1 w-full bg-app-bg p-8 transition-colors duration-200">
       <div className="max-w-7xl mx-auto">
         <div className="md:flex md:items-center md:justify-between mb-8">
           <div className="min-w-0 flex-1">

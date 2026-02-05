@@ -8,6 +8,7 @@ import OrganDetail from './pages/OrganDetail';
 import Charts from './pages/Charts';
 import { PopupProvider } from './context/PopupContext';
 import GlobalPopup from './components/GlobalPopup';
+import ScrollToTop from './components/ScrollToTop';
 
 export default function App() {
   const [selectedId, setSelectedId] = useState(null);
@@ -44,6 +45,7 @@ export default function App() {
   return (
     <PopupProvider>
         <Router>
+            <ScrollToTop />
             <div className="flex flex-col min-h-screen w-full bg-app-bg text-text-main transition-colors duration-200">
             
             {/* Header */}
