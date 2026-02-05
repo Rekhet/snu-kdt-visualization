@@ -5,68 +5,90 @@ import HumanModel from '../../components/HumanModel';
 
 /**
  * Design Labs: Single Theme Implementation
- * Theme: Modern Clinical (Teal & Amber)
- * This page serves as a focused showcase of a professional medical aesthetic.
+ * Theme: Bio-Tech Lab (Indigo & Electric Lime)
+ * This page serves as a futuristic, digital-twin aesthetic showcase.
  */
 const LabsIndex = () => {
   return (
-    <div className="flex-1 w-full min-h-screen bg-[#f8fafc] flex flex-col items-center justify-center relative overflow-hidden transition-colors duration-500">
+    <div className="flex-1 w-full min-h-screen bg-[#020617] flex flex-col items-center justify-center relative overflow-hidden transition-colors duration-500 text-white">
       
       {/* Background 3D Showcase */}
-      <div className="absolute inset-0 z-0">
+      <div className="absolute inset-0 z-0 opacity-80">
         <Canvas camera={{ position: [0, 1.5, 4], fov: 45 }}>
-          <ambientLight intensity={0.8} />
-          <spotLight position={[10, 10, 10]} angle={0.15} penumbra={1} intensity={1} />
-          <Environment preset="city" />
+          <ambientLight intensity={0.4} />
+          <pointLight position={[10, 10, 10]} intensity={2} color="#84cc16" />
+          <Environment preset="night" />
           <Suspense fallback={null}>
             <group position={[0, -1, 0]} scale={[1.2, 1.2, 1.2]}>
                 <HumanModel 
-                    // Simulating a data-driven state for the palette demo
-                    prevalenceValue={25000} 
+                    // Simulating a high-tech data state
+                    prevalenceValue={40000} // 40% affected
                 />
             </group>
           </Suspense>
-          <ContactShadows opacity={0.2} scale={10} blur={2.5} far={4} color="#2dd4bf" />
-          <OrbitControls enableZoom={false} autoRotate autoRotateSpeed={0.5} />
+          <ContactShadows opacity={0.4} scale={10} blur={2} far={4} color="#84cc16" />
+          <OrbitControls enableZoom={false} autoRotate autoRotateSpeed={1.5} />
         </Canvas>
       </div>
 
       {/* Hero Content Overlay */}
-      <div className="z-10 text-center space-y-6 pointer-events-none p-6">
-        <header className="space-y-2">
-            <div className="inline-block px-3 py-1 bg-[#2dd4bf]/10 border border-[#2dd4bf]/20 rounded-full text-[10px] font-bold text-[#2dd4bf] uppercase tracking-[0.3em] mb-4 animate-pulse">
-                Design Lab: Active
+      <div className="z-10 text-center space-y-4 pointer-events-none p-6">
+        <header className="space-y-4">
+            <div className="inline-block border border-[#84cc16]/50 px-4 py-1.5 rounded-sm text-[10px] font-mono text-[#84cc16] uppercase tracking-[0.4em] mb-6 bg-[#84cc16]/5 backdrop-blur-sm animate-pulse">
+                Bio-Tech Core: Operating
             </div>
-            <h1 className="text-6xl md:text-8xl font-black tracking-tighter text-[#0f172a] drop-shadow-sm">
-              MODERN<span className="text-[#2dd4bf]">CLINICAL</span>
+            <h1 className="text-7xl md:text-9xl font-black tracking-[0.15em] text-white drop-shadow-[0_0_20px_rgba(132,204,22,0.4)] uppercase">
+              BIO<span className="text-[#84cc16]">TECH</span>
             </h1>
         </header>
 
-        <div className="flex items-center justify-center gap-4">
-            <span className="h-px w-16 bg-[#2dd4bf]"></span>
-            <p className="text-lg md:text-xl text-[#64748b] font-medium tracking-[0.2em] uppercase">
-                Precision Health Visualization
+        <div className="flex flex-col items-center gap-2">
+            <p className="text-sm md:text-base text-slate-400 font-light tracking-[0.6em] uppercase">
+                Synthetic Diagnostic Interface
             </p>
-            <span className="h-px w-16 bg-[#2dd4bf]"></span>
+            <div className="w-32 h-px bg-gradient-to-r from-transparent via-[#84cc16] to-transparent mt-4 opacity-50"></div>
         </div>
 
-        <div className="pt-12 flex flex-col items-center gap-4">
-            <div className="px-8 py-3 bg-[#f59e0b] text-white rounded-2xl text-sm font-bold shadow-2xl shadow-amber-200/50 uppercase tracking-widest transition-transform hover:scale-105 pointer-events-auto cursor-help" title="Visualizing 25% Prevalence">
-                Prevalence Density: High
+        <div className="pt-16 flex flex-col items-center gap-6">
+            <div className="flex gap-1.5">
+                {Array.from({length: 8}).map((_, i) => (
+                    <div 
+                        key={i} 
+                        className="w-1.5 h-1.5 bg-[#84cc16] shadow-[0_0_8px_#84cc16]" 
+                        style={{ animation: `pulse 2s infinite ${i * 0.1}s` }}
+                    ></div>
+                ))}
             </div>
-            <p className="text-[10px] text-slate-400 font-mono uppercase tracking-widest">
-                Palette: Teal #2dd4bf | Amber #f59e0b | Slate #f8fafc
-            </p>
+            <div className="px-6 py-2 border border-[#84cc16] text-[#84cc16] rounded-sm text-[10px] font-mono uppercase tracking-[0.2em] pointer-events-auto cursor-crosshair hover:bg-[#84cc16] hover:text-[#020617] transition-all duration-300">
+                Data Stream: 40.0% P-Density
+            </div>
         </div>
       </div>
 
-      {/* Navigation Hint */}
-      <div className="absolute bottom-12 left-1/2 -translate-x-1/2 z-10 pointer-events-none opacity-30">
-         <div className="flex flex-col items-center gap-2">
-            <span className="text-[10px] font-bold text-slate-500 uppercase tracking-widest">Interactive Sample</span>
-            <div className="w-px h-12 bg-gradient-to-b from-slate-400 to-transparent"></div>
+      {/* Technical HUD Elements */}
+      <div className="absolute top-24 left-12 z-10 pointer-events-none opacity-20 hidden md:block">
+         <div className="font-mono text-[8px] space-y-1 text-[#84cc16]">
+            <p>REL_SYS_GRID_INIT: OK</p>
+            <p>MESH_VTX_COUNT: 42,891</p>
+            <p>SHDR_GLOW_INT: 0.85</p>
+            <p>PREV_VAL_NORMALIZED: 0.400</p>
          </div>
       </div>
+
+      <div className="absolute bottom-12 right-12 z-10 pointer-events-none opacity-20 hidden md:block text-right">
+         <div className="font-mono text-[8px] space-y-1 text-[#84cc16]">
+            <p>TERM_SEC_ENCR: AES-256</p>
+            <p>LATENCY_MS: 12.4</p>
+            <p>LAB_ENV_V: 2.4.0-STABLE</p>
+         </div>
+      </div>
+
+      <style dangerouslySetInnerHTML={{ __html: `
+        @keyframes pulse {
+            0%, 100% { opacity: 0.3; transform: scale(0.8); }
+            50% { opacity: 1; transform: scale(1.2); }
+        }
+      `}} />
 
     </div>
   );
