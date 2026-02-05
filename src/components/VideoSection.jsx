@@ -31,21 +31,29 @@ const VideoSection = ({ progress, src, visible }) => {
       className="fixed top-16 inset-x-0 bottom-0 flex items-center justify-center bg-black transition-opacity duration-300 pointer-events-none"
       style={{ 
         opacity: visible ? Math.max(0, Math.min(1, opacity)) : 0,
-        zIndex: 90, // Extremely high z-index to stay above everything except header
+        zIndex: 90, 
       }}
     >
-      <video
-        ref={videoRef}
-        muted
-        loop
-        playsInline
-        autoPlay
-        className="w-full h-full object-contain"
-        style={{ backgroundColor: 'black' }}
-      >
-        <source src={src} type="video/mp4" />
-        Your browser does not support the video tag.
-      </video>
+      {/* DEBUG PLACEHOLDER: Replace video with red box */}
+      <div className="w-full h-full bg-red-600 flex flex-col items-center justify-center text-white p-10 text-center">
+        <h2 className="text-4xl font-black mb-4">VIDEO DEBUG PLACEHOLDER</h2>
+        <p className="text-xl">This red area represents the Video Section.</p>
+        <p className="mt-2 font-mono bg-black/20 px-4 py-2 rounded">
+            Visible: {visible ? 'TRUE' : 'FALSE'} | Progress: {progress.toFixed(2)}
+        </p>
+        
+        {/* Hidden video element still exists for logic testing */}
+        <video
+            ref={videoRef}
+            muted
+            loop
+            playsInline
+            autoPlay
+            className="hidden"
+        >
+            <source src={src} type="video/mp4" />
+        </video>
+      </div>
     </div>
   );
 };
