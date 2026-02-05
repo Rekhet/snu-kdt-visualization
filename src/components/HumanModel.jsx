@@ -79,12 +79,13 @@ const HumanModel = ({ onPartSelect, onPartDoubleClick, showWireframe, onHoverCha
     const cloned = scene.clone();
     
     // Determine color based on prevalenceValue (if in grid mode)
-    // The hero mesh is index 45 in the 10x10 grid.
-    // affectedCount = prevalenceValue / 1000.
+    // The hero mesh is at Row 4, Col 5 in the 10x10 grid.
+    // In the new "front-to-back" fill order (Row 9 first), 
+    // fillOrderIndex = (9 - row) * 10 + col = (9 - 4) * 10 + 5 = 55.
     let materialColor = isDarkMode ? '#e2e8f0' : '#4e4849';
     if (prevalenceValue !== null) {
         const affectedCount = Math.round(prevalenceValue / 1000);
-        if (45 < affectedCount) {
+        if (55 < affectedCount) {
             materialColor = 'crimson'; // Match "Affected" color in grid
         }
     }

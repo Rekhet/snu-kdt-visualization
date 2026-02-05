@@ -89,14 +89,16 @@ export const PopulationGrid = ({ progress, prevalenceValue = 0 }) => {
         dummy.updateMatrix();
         meshRef.current.setMatrixAt(i, dummy.matrix);
 
-        // Color Logic: Top-down or random? 
-        // Indices 0-99. Hero is at 45 (skipped in positions, but index matches loop).
-        // Wait, loop index i here is from 0 to 98 (since 100 total - 1 hero).
-        // We need to map i back to grid index to be consistent with hero.
+        // Color Logic: Start filling from the front row (closest to camera)
+        // Row 0 is back, Row 9 is front. So we fill Row 9, then 8, etc.
         let gridIndex = i;
-        if (i >= 45) gridIndex = i + 1;
+        if (i >= 45) gridIndex = i + 1; // Map back to 0-99 grid index
 
-        if (gridIndex < affectedCount) {
+        const row = Math.floor(gridIndex / 10);
+        const col = gridIndex % 10;
+        const fillOrderIndex = (9 - row) * 10 + col;
+
+        if (fillOrderIndex < affectedCount) {
             meshRef.current.setColorAt(i, affectedColor);
         } else {
             meshRef.current.setColorAt(i, normalColor);
