@@ -2,11 +2,11 @@
 
 export const SCROLL_CONFIG = {
   // Total height of the scroll container in viewport units
-  containerHeightVh: 800,
+  containerHeightVh: 1200,
   
   // The scroll threshold factor relative to window height
-  // Higher value means slower scroll-driven animations
-  thresholdFactor: 8.0, 
+  // Doubled from 8.0 to 16.0 to halve the animation speed
+  thresholdFactor: 16.0, 
 
   // Animation Phases (Event Points)
   phases: {
