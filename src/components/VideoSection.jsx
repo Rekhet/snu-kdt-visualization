@@ -2,26 +2,26 @@ import React, { useRef, useEffect } from 'react';
 
 const VideoSection = ({ progress, src, visible }) => {
   const videoRef = useRef(null);
-  const wasVisibleRef = useRef(false);
 
   useEffect(() => {
-    if (!videoRef.current) return;
+    const video = videoRef.current;
+    if (!video) return;
 
-    if (visible && !wasVisibleRef.current) {
-      // Reload and play when coming into view
-      videoRef.current.currentTime = 0;
-      videoRef.current.play().catch(err => console.log("Autoplay blocked or failed:", err));
-    } else if (!visible && wasVisibleRef.current) {
-      // Pause when going out of view to save resources
-      videoRef.current.pause();
+    if (visible) {
+      // Ensure it starts from beginning and plays
+      video.currentTime = 0;
+      const playPromise = video.play();
+      if (playPromise !== undefined) {
+        playPromise.catch(err => {
+          console.warn("Video playback was interrupted or blocked:", err);
+        });
+      }
+    } else {
+      video.pause();
     }
-
-    wasVisibleRef.current = visible;
   }, [visible]);
 
-  if (!visible) return null;
-
-  // Simple fade in/out based on progress
+  // Smoother fade logic based on the 0-1 progress of this specific phase
   const opacity = progress > 0 && progress < 0.1 
     ? progress * 10 
     : progress > 0.9 && progress < 1 
@@ -30,8 +30,12 @@ const VideoSection = ({ progress, src, visible }) => {
 
   return (
     <div 
-      className="fixed inset-0 z-20 flex items-center justify-center bg-black transition-opacity duration-300 pointer-events-none"
-      style={{ opacity }}
+      className={`fixed inset-0 flex items-center justify-center bg-black transition-opacity duration-500 pointer-events-none`}
+      style={{ 
+        opacity: visible ? opacity : 0,
+        zIndex: 45, // High z-index to stay above canvas and most overlays
+        visibility: visible || opacity > 0.01 ? 'visible' : 'hidden'
+      }}
     >
       <video
         ref={videoRef}
@@ -39,7 +43,9 @@ const VideoSection = ({ progress, src, visible }) => {
         muted
         loop
         playsInline
+        autoPlay
         className="w-full h-full object-contain"
+        style={{ backgroundColor: 'black' }}
       />
     </div>
   );

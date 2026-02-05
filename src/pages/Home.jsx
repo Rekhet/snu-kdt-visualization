@@ -376,7 +376,7 @@ export default function Home({
             <VideoSection 
                 progress={videoProgress} 
                 src="/data/front-video.mp4" 
-                visible={videoProgress > 0 && videoProgress < 1}
+                visible={videoProgress > 0 && videoProgress <= 1}
             />
 
             {/* Grid Visualization Controls */}
