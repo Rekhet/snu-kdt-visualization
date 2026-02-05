@@ -174,7 +174,7 @@ const CameraHandler = ({ isLocked, selectedId, zoomLevel, resetTrigger, onContro
         left: 1, 
         middle: 2, 
         right: 0, 
-        wheel: 0
+        wheel: isLocked ? 16 : 0 // 16 is ACTION.DOLLY in camera-controls
       }}
       touches={{
         one: 32,
