@@ -302,7 +302,7 @@ export default function Home({
             </div>
 
             {/* Sticky 3D Canvas */}
-            <div className={`sticky top-0 h-screen w-full overflow-hidden transition-all duration-300 ${interactionMode ? 'pointer-events-auto' : 'pointer-events-none'}`}>
+            <div className={`sticky top-0 h-screen w-full overflow-hidden transition-all duration-300 ${showUI ? 'pointer-events-auto' : 'pointer-events-none'}`}>
                 <Canvas
                   shadows
                   dpr={[1, 2]} 
