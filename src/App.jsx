@@ -6,6 +6,10 @@ import Home from './pages/Home';
 import Settings from './pages/Settings';
 import OrganDetail from './pages/OrganDetail';
 import Charts from './pages/Charts';
+import LabsIndex from './pages/labs/LabsIndex';
+import ModernClinical from './pages/labs/ModernClinical';
+import BioTechLab from './pages/labs/BioTechLab';
+import DeepAnalytics from './pages/labs/DeepAnalytics';
 import { PopupProvider } from './context/PopupContext';
 import GlobalPopup from './components/GlobalPopup';
 import ScrollToTop from './components/ScrollToTop';
@@ -73,6 +77,12 @@ export default function App() {
                 } />
                 <Route path="/organ/:organId" element={<OrganDetail />} />
                 <Route path="/charts" element={<Charts />} />
+                
+                {/* Design Labs */}
+                <Route path="/labs" element={<LabsIndex />} />
+                <Route path="/labs/modern" element={<ModernClinical />} />
+                <Route path="/labs/biotech" element={<BioTechLab />} />
+                <Route path="/labs/deep" element={<DeepAnalytics />} />
             </Routes>
 
             {/* Footer */}
