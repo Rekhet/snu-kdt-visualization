@@ -8,13 +8,15 @@ export const PopulationGrid = ({ progress }) => {
   const { scene } = useGLTF(MODEL_URL);
   const meshRef = useRef();
   
-  // Extract geometry and material
-  const { geometry, material } = useMemo(() => {
-    let geom, mat;
+  // Extract geometry, material, and base rotation
+  const { geometry, material, baseRotation } = useMemo(() => {
+    let geom, mat, rot = new THREE.Euler();
     if (scene) {
         scene.traverse((child) => {
         if ((child.isMesh || child.isSkinnedMesh) && !geom) {
             geom = child.geometry;
+            // Capture original rotation to maintain orientation in instancedMesh
+            rot.copy(child.rotation);
             // Use a ghost-like material for the population
             mat = new THREE.MeshStandardMaterial({ 
                 color: '#64748b', // Slate-500
@@ -26,7 +28,7 @@ export const PopulationGrid = ({ progress }) => {
         }
         });
     }
-    return { geometry: geom, material: mat };
+    return { geometry: geom, material: mat, baseRotation: rot };
   }, [scene]);
 
   // Generate Positions for 10x10 Grid
@@ -70,12 +72,16 @@ export const PopulationGrid = ({ progress }) => {
     positions.forEach((p, i) => {
         dummy.position.set(p.x, p.y, p.z);
         dummy.scale.set(currentScale, currentScale, currentScale);
-        dummy.rotation.y = 0; // Face forward
+        
+        // Apply base rotation from model plus any additional orientation
+        dummy.rotation.copy(baseRotation);
+        dummy.rotation.y += 0; // Maintain forward facing
+        
         dummy.updateMatrix();
         meshRef.current.setMatrixAt(i, dummy.matrix);
     });
     meshRef.current.instanceMatrix.needsUpdate = true;
-  }, [progress, positions, dummy, geometry, material]);
+  }, [progress, positions, dummy, geometry, material, baseRotation]);
 
   if (!geometry) return null;
 
