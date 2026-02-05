@@ -53,8 +53,8 @@ const BarChartRace = ({
   useEffect(() => {
     if (!data || !years.length || !svgRef.current) return;
 
-    // Pause Logic: Hold start for 10%, Hold end for 10%
-    const PAUSE = 0.1; 
+    // Pause Logic: Hold start for 30%, Hold end for 30% (3x longer than before)
+    const PAUSE = 0.3; 
     let effectiveProgress = 0;
     if (progress < PAUSE) effectiveProgress = 0;
     else if (progress > 1 - PAUSE) effectiveProgress = 1;
@@ -152,7 +152,7 @@ const BarChartRace = ({
 
   // Calculate display year for header outside of D3 logic
   const displayYearHeader = years.length > 0 
-     ? Math.floor(years[0] + (progress < 0.1 ? 0 : progress > 0.9 ? 1 : (progress - 0.1) / 0.8) * (years[years.length-1] - years[0]))
+     ? Math.floor(years[0] + (progress < 0.3 ? 0 : progress > 0.7 ? 1 : (progress - 0.3) / 0.4) * (years[years.length-1] - years[0]))
      : "";
 
   return (
