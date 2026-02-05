@@ -376,13 +376,15 @@ export default function Home({
 
             {/* Chart Race Section Overlay */}
             <div 
-                className={`fixed inset-0 pointer-events-none flex items-center justify-center z-30 transition-opacity duration-500 ${chartProgress > 0 && chartProgress < 1 ? 'opacity-100' : 'opacity-0'}`}
+                style={{ 
+                    opacity: chartProgress > 0 && chartProgress < 0.9 
+                        ? 1 
+                        : chartProgress >= 0.9 && chartProgress < 1 
+                        ? (1 - chartProgress) * 10 
+                        : 0 
+                }}
+                className={`fixed inset-0 pointer-events-none flex items-center justify-center z-30 transition-opacity duration-300`}
             >
-                {/* Only render if relevant to save resources, or just use opacity */}
-                {/* We keep it mounted but hidden to maintain state if desired, or unmount. Unmounting resets race? 
-                    Actually standard ChartRace component will re-interpolate from current props. 
-                    Let's keep it mounted to allow smooth scrolling back and forth. 
-                */}
                 <div className="pointer-events-auto">
                     <BarChartRace progress={chartProgress} visible={chartProgress > 0 && chartProgress < 1} />
                 </div>

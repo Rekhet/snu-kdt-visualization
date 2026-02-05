@@ -165,7 +165,7 @@ const BarChartRace = ({
 
   }, [data, years, progress, width, height, margin]);
 
-  if (!visible) return null;
+  if (!visible || progress >= 1 || progress <= 0) return null;
 
   return (
     <div className="bg-panel-bg/80 backdrop-blur-md border border-panel-border rounded-xl p-6 shadow-2xl">

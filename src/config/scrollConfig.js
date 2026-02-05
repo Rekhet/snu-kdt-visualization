@@ -16,33 +16,33 @@ export const SCROLL_CONFIG = {
       end: 0.1, 
     },
     
-    // Phase 2: Single Model Reveal (Scale 0 -> 1)
-    modelReveal: {
-      start: 0.1,
-      end: 0.25,
-    },
-
-    // Phase 3: Single Model Interactive (Locked/Paused zone)
-    singleView: {
-      start: 0.25,
-      end: 0.5,
-    },
-
-    // Phase 4: Chart Race (Yearly Cancer Data)
+    // Phase 2: Chart Race (History First)
     chartRace: {
-      start: 0.5,
-      end: 0.75,
+      start: 0.15,
+      end: 0.4,
+    },
+
+    // Phase 3: Single Model Reveal (Scale 0 -> 1)
+    modelReveal: {
+      start: 0.45,
+      end: 0.6,
+    },
+
+    // Phase 4: Single Model Interactive (Locked/Paused zone)
+    singleView: {
+      start: 0.6,
+      end: 0.8,
     },
 
     // Phase 5: Grid Expansion
     gridReveal: {
-      start: 0.75,
+      start: 0.85,
       end: 1.0,
     },
     
     // Interaction trigger (for single model)
-    interactionStart: 0.25,
-    interactionEnd: 0.5,
+    interactionStart: 0.6,
+    interactionEnd: 0.8,
   },
 
   // Easing functions
