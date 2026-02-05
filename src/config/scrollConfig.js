@@ -2,8 +2,8 @@
 
 export const SCROLL_CONFIG = {
   // Total height of the scroll container in viewport units
-  // Increased to 1800vh to ensure animation progress reaches 1.0 (thresholdFactor + buffer)
-  containerHeightVh: 1800,
+  // Increased to 2000vh to ensure animation progress reaches 1.0 with a healthy buffer
+  containerHeightVh: 2000,
   
   // The scroll threshold factor relative to window height
   // 16.0 means animation reaches 1.0 at 16 * viewport_height pixels
@@ -20,12 +20,13 @@ export const SCROLL_CONFIG = {
     // Event 2: Historical Chart Race (Independent Section)
     EVENT_CHART_RACE: {
       start: 0.1,
-      end: 0.45,
+      end: 0.5,
     },
 
     // Event 3: Body Model Appearance
+    // Start slightly early (0.48) for a smooth cross-fade with the chart
     EVENT_MODEL_REVEAL: {
-      start: 0.5,
+      start: 0.48,
       end: 0.65,
     },
 

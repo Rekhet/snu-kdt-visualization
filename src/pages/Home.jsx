@@ -84,7 +84,8 @@ const ScrollScene = ({ interactionMode, modelGroupRef, setGridProgress }) => {
             // Transition Intro -> Single
             vec.lerpVectors(posStart, posSingle, revealP);
             camera.position.copy(vec);
-            camera.lookAt(0, 1.0, 0);
+            // Look at chest level (1.2) for better visual centering
+            camera.lookAt(0, 1.2, 0);
         }
     }
 
@@ -126,7 +127,7 @@ const CameraHandler = ({ isLocked, selectedId, zoomLevel, resetTrigger, onContro
         if (isLocked) {
             controlsRef.current.setLookAt(
                 camera.position.x, camera.position.y, camera.position.z,
-                0, 1.0, 0,
+                0, 1.2, 0,
                 false
             );
         }
@@ -149,8 +150,8 @@ const CameraHandler = ({ isLocked, selectedId, zoomLevel, resetTrigger, onContro
         });
       }
     } else {
-      // Standard Reset
-      controlsRef.current.setLookAt(0, 1.5, 4, 0, 1.0, 0, true);
+      // Standard Reset - Center on chest
+      controlsRef.current.setLookAt(0, 1.5, 4, 0, 1.2, 0, true);
     }
   }, [selectedId, zoomLevel, isLocked, scene, resetTrigger]);
 
@@ -225,7 +226,7 @@ export default function Home({
         
         // 2. Animate camera back to standard view (matches ScrollScene target)
         if (cameraControls) {
-            await cameraControls.setLookAt(0, 1.5, 4, 0, 1.0, 0, true);
+            await cameraControls.setLookAt(0, 1.5, 4, 0, 1.2, 0, true);
         }
 
         // 3. Unlock interaction
@@ -276,7 +277,7 @@ export default function Home({
   const showUI = interactionMode || isInScrollZone;
 
   // The floating button should be hidden during the intro and chart race
-  const isButtonHidden = progress < SCROLL_CONFIG.phases.EVENT_CHART_RACE.end || interactionMode || isInScrollZone;
+  const isButtonHidden = progress < SCROLL_CONFIG.phases.EVENT_MODEL_REVEAL.start || interactionMode || isInScrollZone;
 
   return (
       <main className="relative w-full">
@@ -300,8 +301,8 @@ export default function Home({
                 </div>
             </div>
 
-            {/* Sticky 3D Canvas */}
-            <div className={`sticky top-0 h-screen w-full overflow-hidden transition-all duration-300 ${showUI ? 'pointer-events-auto' : 'pointer-events-none'}`}>
+            {/* Sticky 3D Canvas - Aligned below header */}
+            <div className={`sticky top-16 h-[calc(100vh-4rem)] w-full overflow-hidden transition-all duration-300 ${showUI ? 'pointer-events-auto' : 'pointer-events-none'}`}>
                 <Canvas
                   shadows
                   dpr={[1, 2]} 
@@ -350,22 +351,12 @@ export default function Home({
                 </Canvas>
             </div>
 
-            {/* Floating button helps user get to the zone where interaction is possible. 
-                Hide it if we are already interacting. 
-                Show it if we are NOT interacting AND NOT in the zone (so we need to scroll there).
-                Wait, previous logic: "visible if NOT locked". Locked meant "In Zone".
-                So Floating Button appears when you are NOT in the zone.
-                If interactionMode is true, we are effectively "In Zone".
-                So `!isInScrollZone && !interactionMode`?
-                Actually previous code: `visible = !isLocked`.
-                Here `isLocked` roughly maps to `isInScrollZone`.
-                If I pass `interactionMode || isInScrollZone` as `isLocked` to the button, it will hide when in zone.
-            */}
+            {/* Floating button helps user get to the zone where interaction is possible. */}
             <FloatingScrollButton isLocked={isButtonHidden} />
 
-            {/* Interaction UI Overlay (Single View only) */}
+            {/* Interaction UI Overlay (Single View only) - Aligned below header */}
             <div 
-                className={`fixed inset-0 pointer-events-none transition-opacity duration-500 z-40 ${showUI ? 'opacity-100' : 'opacity-0'}`}
+                className={`fixed top-16 h-[calc(100vh-4rem)] w-full inset-x-0 pointer-events-none transition-opacity duration-500 z-40 ${showUI ? 'opacity-100' : 'opacity-0'}`}
             >
                  <Overlay 
                     selectedId={selectedId} 
@@ -381,7 +372,7 @@ export default function Home({
                  />
             </div>
 
-            {/* Chart Race Section Overlay */}
+            {/* Chart Race Section Overlay - Aligned below header */}
             <div 
                 style={{ 
                     opacity: chartProgress > 0 && chartProgress < 0.9 
@@ -390,7 +381,7 @@ export default function Home({
                         ? (1 - chartProgress) * 10 
                         : 0 
                 }}
-                className={`fixed inset-0 pointer-events-none flex items-center justify-center z-30 transition-opacity duration-300`}
+                className={`fixed top-16 h-[calc(100vh-4rem)] w-full inset-x-0 pointer-events-none flex items-center justify-center z-30 transition-opacity duration-300`}
             >
                 <div className="pointer-events-auto">
                     <BarChartRace progress={chartProgress} visible={chartProgress > 0 && chartProgress < 1} />
