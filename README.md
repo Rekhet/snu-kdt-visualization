@@ -12,12 +12,11 @@ A high-performance, interactive 3D web application for visualizing disease data 
 - **Floating Navigation**: A smart floating button that guides users back to the interactive model view when scrolled away.
 
 ### Data & Analytics
-- **Disease Data Overlay**: Context-sensitive information displaying common conditions associated with selected organs/regions.
-- **Interactive Charts**: A dedicated analytics dashboard featuring:
-    - Diverging Bar Charts (Gender comparison)
-    - Heatmaps (Age vs. Cancer Type)
-    - Line Charts (Trends over time)
-    - Pie Charts (Distribution)
+- **Context-Sensitive Charts**: Organ-specific data visualizations integrated into detail views and overlays:
+    - **Incidence Trends**: Age-based incidence rates for specific cancers.
+    - **Survival Comparison**: Relative survival rate changes compared to other organs.
+    - **Treatment Efficacy**: Heatmap showing effectiveness of various treatments for the selected organ.
+- **Dedicated Analytics Dashboard**: A centralized view for global cancer trends and disease statistics.
 - **Search System**: Real-time search to locate, highlight, and zoom into specific body parts.
 
 ### Customization & State
