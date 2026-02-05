@@ -5,13 +5,13 @@ import { useTheme } from '../context/ThemeContext';
 
 const MODEL_URL = 'models/human.glb';
 
-export const PopulationGrid = ({ progress, survivalRate = 100 }) => {
+export const PopulationGrid = ({ progress, prevalenceValue = 0 }) => {
   const { scene } = useGLTF(MODEL_URL);
   const { theme } = useTheme();
   const meshRef = useRef();
   
   const isDarkMode = theme === 'dark' || (theme === 'system' && window.matchMedia('(prefers-color-scheme: dark)').matches);
-  const baseColor = isDarkMode ? '#e2e8f0' : '#4e4849'; // The "Alive" color matches hero
+  const healthyColor = isDarkMode ? '#e2e8f0' : '#4e4849'; 
 
   // Extract geometry, material, and base orientation/scale
   const { geometry, material, baseQuaternion, baseScale } = useMemo(() => {
@@ -36,7 +36,7 @@ export const PopulationGrid = ({ progress, survivalRate = 100 }) => {
         });
     }
     return { geometry: geom, material: mat, baseQuaternion: quat, baseScale: sca };
-  }, [scene]); // Removed materialColor dep as material is now white
+  }, [scene]);
 
   // Generate Positions for 10x10 Grid
   const { dummy, positions } = useMemo(() => {
@@ -71,12 +71,12 @@ export const PopulationGrid = ({ progress, survivalRate = 100 }) => {
     // eslint-disable-next-line react-hooks/immutability
     material.opacity = progress * 0.6; 
     
-    const aliveColor = new THREE.Color(baseColor);
-    const deadColor = new THREE.Color('#333333'); // Dark grey for fatality
-    // Or maybe Red? User said "Fatality". Dark/Grey is usually better for "missing/dead".
-    // Let's stick to dark grey.
+    const normalColor = new THREE.Color(healthyColor);
+    const affectedColor = new THREE.Color('crimson'); // Crimson for prevalence
     
-    const deadCount = 100 - Math.round(survivalRate);
+    // 1 mesh = 1%. prevalenceValue is per 100,000.
+    // So 1000 per 100k = 1%.
+    const affectedCount = Math.round(prevalenceValue / 1000);
 
     positions.forEach((p, i) => {
         dummy.position.set(p.x, p.y, p.z);
@@ -90,19 +90,23 @@ export const PopulationGrid = ({ progress, survivalRate = 100 }) => {
         meshRef.current.setMatrixAt(i, dummy.matrix);
 
         // Color Logic: Top-down or random? 
-        // Let's do simple index based for now.
-        // If 30 dead, indices 0-29 are dead.
-        if (i < deadCount) {
-            meshRef.current.setColorAt(i, deadColor);
+        // Indices 0-99. Hero is at 45 (skipped in positions, but index matches loop).
+        // Wait, loop index i here is from 0 to 98 (since 100 total - 1 hero).
+        // We need to map i back to grid index to be consistent with hero.
+        let gridIndex = i;
+        if (i >= 45) gridIndex = i + 1;
+
+        if (gridIndex < affectedCount) {
+            meshRef.current.setColorAt(i, affectedColor);
         } else {
-            meshRef.current.setColorAt(i, aliveColor);
+            meshRef.current.setColorAt(i, normalColor);
         }
     });
     
     meshRef.current.instanceMatrix.needsUpdate = true;
     if (meshRef.current.instanceColor) meshRef.current.instanceColor.needsUpdate = true;
     
-  }, [progress, positions, dummy, geometry, material, baseQuaternion, baseScale, baseColor, survivalRate]);
+  }, [progress, positions, dummy, geometry, material, baseQuaternion, baseScale, healthyColor, prevalenceValue]);
 
   if (!geometry) return null;
 

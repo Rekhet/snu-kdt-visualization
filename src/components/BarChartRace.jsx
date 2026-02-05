@@ -29,19 +29,26 @@ const BarChartRace = ({
       const extractedYears = yearRow.slice(3).map(y => +y);
       setYears(extractedYears);
 
-      // Filter for all major death causes
-      // Identify rows where col 0 contains specific alphanumeric codes in parentheses
-      // and exclude "Re." (which often denote aggregates or remainders)
+      // Filter for exactly the 24 cancers in the cancer_24_age5 list
+      const targetCancers = [
+        "(C00-C14)", "(C15)", "(C16)", "(C18-C20)", "(C22)", "(C23-C24)", 
+        "(C25)", "(C32)", "(C33-C34)", "(C50)", "(C53)", "(C54)", "(C56)", 
+        "(C61)", "(C62)", "(C64)", "(C67)", "(C70-C72)", "(C73)", "(C81)", 
+        "(C82-C86C96)", "(C90)", "(C91-C95)", "Re. C00-C96"
+      ];
+
       const causeRows = rows.slice(2).filter(r => {
         const label = r[0];
-        // Typical codes: (A00), (C16), (I21), etc. 
-        // We want specific categories, avoiding the very broad ones if possible.
-        // Actually, let's include anything with a code but filter out explicit aggregate strings.
-        return label && label.includes("(") && !label.includes("Re.") && !label.includes("(C00-C97)") && !label.includes("(A00- B99)");
+        if (!label) return false;
+        // Check if any of our target substrings exist in the label
+        return targetCancers.some(target => label.includes(target));
       });
 
       const formatted = causeRows.map(row => {
-        const label = row[0].split("(")[0].trim(); 
+        let label = row[0].split("(")[0].trim(); 
+        // Handle "Re. C00-C96" case which might not have parens
+        if (row[0].includes("Re. C00-C96")) label = "Other Cancers";
+        
         const values = row.slice(3).map(v => {
             const num = +v.replace(/,/g, '').replace(/-/g, '0'); 
             return isNaN(num) ? 0 : num;
@@ -88,8 +95,7 @@ const BarChartRace = ({
             color: colorMap[d.label] || "#ccc" // Use stable color
         };
     })
-    .sort((a, b) => b.value - a.value) 
-    .slice(0, 12); // Slightly more bars for "all causes"
+    .sort((a, b) => b.value - a.value); // Show all target cancers if they fit, or top N
 
     // D3 Render Logic
     const svg = d3.select(svgRef.current);
@@ -130,7 +136,7 @@ const BarChartRace = ({
         .attr("dy", "0.35em")
         .attr("text-anchor", "end")
         .text(d => d.label)
-        .style("font-size", "11px") // Slightly smaller font for more bars
+        .style("font-size", "10px") 
         .style("font-weight", "bold")
         .style("fill", textColor); 
 
@@ -143,7 +149,7 @@ const BarChartRace = ({
         .attr("y", (d, i) => y(i) + y.bandwidth() / 2)
         .attr("dy", "0.35em")
         .text(d => Math.round(d.value).toLocaleString())
-        .style("font-size", "11px")
+        .style("font-size", "10px")
         .style("fill", isDarkMode ? "#9ca3af" : "#64748b"); 
 
     // Year Label
@@ -170,7 +176,7 @@ const BarChartRace = ({
   return (
     <div className="bg-panel-bg/80 backdrop-blur-md border border-panel-border rounded-xl p-6 shadow-2xl">
         <h3 className="text-xl font-bold text-text-main mb-4 flex justify-between items-center">
-            <span>Leading Causes of Death (Historical)</span>
+            <span>Annual Cancer Mortality (Top 24)</span>
             <span className="text-brand text-2xl font-mono">
                 {displayYearHeader}
             </span>

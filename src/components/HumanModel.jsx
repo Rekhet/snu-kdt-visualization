@@ -55,7 +55,7 @@ const Hitbox = ({
   );
 };
 
-const HumanModel = ({ onPartSelect, onPartDoubleClick, showWireframe, onHoverChange, survivalRate = null }) => {
+const HumanModel = ({ onPartSelect, onPartDoubleClick, showWireframe, onHoverChange, prevalenceValue = null }) => {
   const [hovered, setHovered] = useState(null);
   const { theme } = useTheme();
   
@@ -78,14 +78,14 @@ const HumanModel = ({ onPartSelect, onPartDoubleClick, showWireframe, onHoverCha
     
     const cloned = scene.clone();
     
-    // Determine color based on survivalRate (if in grid mode)
+    // Determine color based on prevalenceValue (if in grid mode)
     // The hero mesh is index 45 in the 10x10 grid.
-    // If survivalRate is 70, deadCount is 30. Hero (45) is Alive.
+    // affectedCount = prevalenceValue / 1000.
     let materialColor = isDarkMode ? '#e2e8f0' : '#4e4849';
-    if (survivalRate !== null) {
-        const deadCount = 100 - Math.round(survivalRate);
-        if (45 < deadCount) {
-            materialColor = '#333333'; // Match "Dead" color in grid
+    if (prevalenceValue !== null) {
+        const affectedCount = Math.round(prevalenceValue / 1000);
+        if (45 < affectedCount) {
+            materialColor = 'crimson'; // Match "Affected" color in grid
         }
     }
 
@@ -111,7 +111,7 @@ const HumanModel = ({ onPartSelect, onPartDoubleClick, showWireframe, onHoverCha
       }
     });
     return cloned;
-  }, [scene, isDarkMode, survivalRate]);
+  }, [scene, isDarkMode, prevalenceValue]);
 
   // Shared props for hitboxes
   const boxProps = {
@@ -166,66 +166,6 @@ const HumanModel = ({ onPartSelect, onPartDoubleClick, showWireframe, onHoverCha
           {...boxProps}
           position={[0, 3.1, -0.05]}
           geometry={<cylinderGeometry args={[0.36, 0.3, 1.4, 32]} />}
-        />
-
-        {/* Arms */}
-        <Hitbox
-          id="arm_l"
-          {...boxProps}
-          position={[0.9, 3.2, -0.2]}
-          rotation={[0, 0, 0.92]}
-          geometry={<cylinderGeometry args={[0.11, 0.1, 1.3, 16]} />}
-        />
-        <Hitbox
-          id="arm_r"
-          {...boxProps}
-          position={[-0.9, 3.2, -0.2]}
-          rotation={[0, 0, -0.92]}
-          geometry={<cylinderGeometry args={[0.11, 0.1, 1.3, 16]} />}
-        />
-
-        {/* Hands */}
-        <Hitbox
-          id="hand_l"
-          {...boxProps}
-          position={[1.62, 2.7, -0.16]}
-          geometry={<sphereGeometry args={[0.28, 16, 16]} />}
-        />
-        <Hitbox
-          id="hand_r"
-          {...boxProps}
-          position={[-1.62, 2.7, -0.16]}
-          geometry={<sphereGeometry args={[0.28, 16, 16]} />}
-        />
-
-        {/* Legs */}
-        <Hitbox
-          id="leg_l"
-          {...boxProps}
-          position={[0.28, 1.5, -0.1]}
-          rotation={[0, 0, 0.1]}
-          geometry={<cylinderGeometry args={[0.15, 0.12, 2.2, 16]} />}
-        />
-        <Hitbox
-          id="leg_r"
-          {...boxProps}
-          position={[-0.28, 1.5, -0.1]}
-          rotation={[0, 0, -0.1]}
-          geometry={<cylinderGeometry args={[0.15, 0.12, 2.2, 16]} />}
-        />
-
-        {/* Feet */}
-        <Hitbox
-          id="foot_l"
-          {...boxProps}
-          position={[0.4, 0.18, 0.12]}
-          geometry={<boxGeometry args={[0.35, 0.35, 0.7]} />}
-        />
-        <Hitbox
-          id="foot_r"
-          {...boxProps}
-          position={[-0.4, 0.18, 0.12]}
-          geometry={<boxGeometry args={[0.35, 0.35, 0.7]} />}
         />
 
       </group>

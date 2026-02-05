@@ -331,8 +331,8 @@ export default function Home({
                             onPartDoubleClick={(id) => { if(showUI) handlePartDoubleClick(id); }}
                             showWireframe={showWireframe}
                             onHoverChange={setHoveredPart}
-                            survivalRate={gridProgress > 0 ? (
-                                survivalTimeSeries.data[selectedCancer]?.values[survivalTimeSeries.years.indexOf(selectedYear)] || 100
+                            prevalenceValue={gridProgress > 0 ? (
+                                survivalTimeSeries.data[selectedCancer]?.values[survivalTimeSeries.years.indexOf(selectedYear)] || 0
                             ) : null}
                           />
                       </Suspense>
@@ -342,8 +342,8 @@ export default function Home({
 
                   <PopulationGrid 
                     progress={gridProgress} 
-                    survivalRate={
-                        survivalTimeSeries.data[selectedCancer]?.values[survivalTimeSeries.years.indexOf(selectedYear)] || 100
+                    prevalenceValue={
+                        survivalTimeSeries.data[selectedCancer]?.values[survivalTimeSeries.years.indexOf(selectedYear)] || 0
                     }
                   />
 
@@ -409,19 +409,23 @@ export default function Home({
                 <div className="border-t border-panel-border pt-4">
                     <div className="flex justify-between items-end">
                         <div>
-                            <p className="text-xs text-text-muted mb-1">5-Year Survival</p>
-                            <p className="text-3xl font-bold text-success">
-                                {survivalTimeSeries.data[selectedCancer]?.values[survivalTimeSeries.years.indexOf(selectedYear)]}%
+                            <p className="text-xs text-text-muted mb-1">5-Year Prevalence</p>
+                            <p className="text-2xl font-bold text-brand">
+                                {survivalTimeSeries.data[selectedCancer]?.values[survivalTimeSeries.years.indexOf(selectedYear)]}
+                                <span className="text-xs font-normal text-text-muted ml-1">/100k</span>
                             </p>
                         </div>
                         <div className="text-right">
-                            <p className="text-xs text-text-muted mb-1">Fatality</p>
+                            <p className="text-xs text-text-muted mb-1">Percentage</p>
                             <p className="text-xl font-bold text-text-main">
-                                {(100 - (survivalTimeSeries.data[selectedCancer]?.values[survivalTimeSeries.years.indexOf(selectedYear)] || 0)).toFixed(1)}%
+                                {( (survivalTimeSeries.data[selectedCancer]?.values[survivalTimeSeries.years.indexOf(selectedYear)] || 0) / 1000 ).toFixed(2)}%
                             </p>
                         </div>
                     </div>
                 </div>
+                <p className="text-[10px] text-text-muted italic leading-tight">
+                    1 human mesh = 1% of the population affected.
+                </p>
             </div>
 
             {/* Interaction UI Overlay (Single View only) - Aligned below header */}
