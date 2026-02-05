@@ -2,6 +2,7 @@ import React, { useRef, useEffect, useState } from 'react';
 
 const VideoSection = ({ progress, src, visible }) => {
   const videoRef = useRef(null);
+  const sourceRef = useRef(null);
   const [errorInfo, setErrorInfo] = useState(null);
   const [isReady, setIsReady] = useState(false);
 
@@ -9,18 +10,45 @@ const VideoSection = ({ progress, src, visible }) => {
     const video = videoRef.current;
     if (!video) return;
 
+    // Detailed Console Logging
+    console.log(`[VideoSection] Visibility: ${visible}, Progress: ${progress.toFixed(2)}`);
+    console.log(`[VideoSection] Current State - ReadyState: ${video.readyState}, NetworkState: ${video.networkState}`);
+
     if (visible) {
       if (video.paused) {
-        video.play().catch(err => {
-          console.warn("Autoplay attempt failed:", err);
+        console.log(`[VideoSection] Attempting play()...`);
+        video.play().then(() => {
+            console.log(`[VideoSection] Playback started successfully.`);
+        }).catch(err => {
+            console.error(`[VideoSection] Playback failed:`, err);
         });
       }
     } else {
       if (!video.paused) {
+        console.log(`[VideoSection] Pausing video.`);
         video.pause();
       }
     }
-  }, [visible]);
+  }, [visible, progress]);
+
+  useEffect(() => {
+    const source = sourceRef.current;
+    if (!source) return;
+
+    const handleSourceError = (e) => {
+        console.error("[VideoSection] <source> tag reported error:", e);
+        // If source tag fails, video.error might still be null, so we check here
+        const video = videoRef.current;
+        if (video && video.error) {
+            console.error("[VideoSection] Video Error Object:", video.error);
+        } else {
+            console.warn("[VideoSection] Source failed but video.error is null. Likely 404 or codec issue.");
+        }
+    };
+
+    source.addEventListener('error', handleSourceError);
+    return () => source.removeEventListener('error', handleSourceError);
+  }, []);
 
   // Fade out only at the very end of the phase (last 5%)
   const opacity = progress > 0.95 
@@ -43,7 +71,7 @@ const VideoSection = ({ progress, src, visible }) => {
         autoPlay
         preload="auto"
         onCanPlay={() => {
-            console.log("Video can play");
+            console.log("[VideoSection] event: onCanPlay");
             setIsReady(true);
             setErrorInfo(null);
         }}
@@ -60,7 +88,7 @@ const VideoSection = ({ progress, src, visible }) => {
                 }
             }
             const info = `${codeMsg} (${src})`;
-            console.error("Video element reported error:", info, e);
+            console.error("[VideoSection] event: onError:", info, e);
             setErrorInfo(info);
         }}
         className="w-full h-full object-contain"
@@ -69,7 +97,7 @@ const VideoSection = ({ progress, src, visible }) => {
             border: '2px solid #fbbf24' 
         }}
       >
-        <source src={src} type="video/mp4" />
+        <source ref={sourceRef} src={src} type="video/mp4" />
       </video>
       
       {/* Debug Info Overlay */}
