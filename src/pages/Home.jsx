@@ -332,7 +332,7 @@ export default function Home({
                             showWireframe={showWireframe}
                             onHoverChange={setHoveredPart}
                             prevalenceValue={gridProgress > 0 ? (
-                                survivalTimeSeries.data[selectedCancer]?.values[survivalTimeSeries.years.indexOf(selectedYear)] || 0
+                                (survivalTimeSeries.data[selectedCancer]?.values[survivalTimeSeries.years.indexOf(selectedYear)] || 0) * 100
                             ) : null}
                           />
                       </Suspense>
@@ -343,7 +343,7 @@ export default function Home({
                   <PopulationGrid 
                     progress={gridProgress} 
                     prevalenceValue={
-                        survivalTimeSeries.data[selectedCancer]?.values[survivalTimeSeries.years.indexOf(selectedYear)] || 0
+                        (survivalTimeSeries.data[selectedCancer]?.values[survivalTimeSeries.years.indexOf(selectedYear)] || 0) * 100
                     }
                   />
 
@@ -416,15 +416,15 @@ export default function Home({
                             </p>
                         </div>
                         <div className="text-right">
-                            <p className="text-xs text-text-muted mb-1">Percentage</p>
+                            <p className="text-xs text-text-muted mb-1">Visual Ratio (x100)</p>
                             <p className="text-xl font-bold text-text-main">
-                                {( (survivalTimeSeries.data[selectedCancer]?.values[survivalTimeSeries.years.indexOf(selectedYear)] || 0) / 1000 ).toFixed(2)}%
+                                {( (survivalTimeSeries.data[selectedCancer]?.values[survivalTimeSeries.years.indexOf(selectedYear)] || 0) / 10 ).toFixed(1)}%
                             </p>
                         </div>
                     </div>
                 </div>
                 <p className="text-[10px] text-text-muted italic leading-tight">
-                    1 human mesh = 1% of the population affected.
+                    Note: Data is scaled up by x100 to enhance visibility. 1 human mesh represents 0.01% of the actual population.
                 </p>
             </div>
 
