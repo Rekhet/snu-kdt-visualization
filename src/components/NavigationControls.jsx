@@ -79,7 +79,7 @@ const NavigationControls = ({ cameraControls, onReset, isInteracting }) => {
   const iconClass = "w-5 h-5 sm:w-6 sm:h-6";
 
   return (
-    <div className="fixed bottom-20 left-6 flex flex-col items-center gap-3 z-[60]">
+    <div className="fixed bottom-20 left-6 flex flex-col items-center gap-3 z-[60] pointer-events-auto">
       
       {/* Directional Pad */}
       <div className={containerClass}>
