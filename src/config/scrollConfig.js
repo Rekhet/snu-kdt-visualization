@@ -2,44 +2,47 @@
 
 export const SCROLL_CONFIG = {
   // Total height of the scroll container in viewport units
-  // Increased to accommodate the new Grid phase
-  containerHeightVh: 450,
+  // Increased to accommodate the new Chart Race phase
+  containerHeightVh: 600,
   
   // The scroll threshold factor relative to window height
-  thresholdFactor: 3.5, 
+  thresholdFactor: 5.0, 
 
   // Animation Phases (values are normalized 0 to 1 of the scroll progress)
   phases: {
     // Phase 1: Title Fade Out
     title: {
       start: 0,
-      end: 0.15, 
+      end: 0.1, 
     },
     
     // Phase 2: Single Model Reveal (Scale 0 -> 1)
     modelReveal: {
-      start: 0.20,
-      end: 0.40,
+      start: 0.1,
+      end: 0.25,
     },
 
     // Phase 3: Single Model Interactive (Locked/Paused zone)
-    // The user 'scrubs' through this zone, but visually it stays 'locked' 
-    // until they push past it.
     singleView: {
-      start: 0.40,
-      end: 0.65,
+      start: 0.25,
+      end: 0.5,
     },
 
-    // Phase 4: Grid Expansion (Single Model shrinks, 99 others appear)
+    // Phase 4: Chart Race (Yearly Cancer Data)
+    chartRace: {
+      start: 0.5,
+      end: 0.75,
+    },
+
+    // Phase 5: Grid Expansion
     gridReveal: {
-      start: 0.70,
-      end: 0.95,
+      start: 0.75,
+      end: 1.0,
     },
     
     // Interaction trigger (for single model)
-    // Active mostly during the 'singleView' phase
-    interactionStart: 0.40,
-    interactionEnd: 0.65,
+    interactionStart: 0.25,
+    interactionEnd: 0.5,
   },
 
   // Easing functions
