@@ -31,8 +31,7 @@ const VideoSection = ({ progress, src, visible }) => {
       className="fixed top-16 inset-x-0 bottom-0 flex items-center justify-center bg-black transition-opacity duration-300 pointer-events-none"
       style={{ 
         opacity: visible ? Math.max(0, Math.min(1, opacity)) : 0,
-        zIndex: 50, // Ensure it's above the Canvas (z-10) and Chart Race (z-30)
-        visibility: (visible && opacity > 0.01) ? 'visible' : 'hidden'
+        zIndex: 90, // Extremely high z-index to stay above everything except header
       }}
     >
       <video

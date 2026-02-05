@@ -16,9 +16,10 @@ export const SCROLL_CONFIG = {
     },
 
     // Event 2: Intro Video Section
+    // Starts immediately after title to prevent "dead zone"
     EVENT_VIDEO_INTRO: {
-      start: 0.08,
-      end: 0.25,
+      start: 0.05,
+      end: 0.28,
     },
     
     // Event 3: Historical Chart Race (Independent Section)
