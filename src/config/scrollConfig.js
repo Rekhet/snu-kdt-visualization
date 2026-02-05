@@ -2,7 +2,7 @@
 
 export const SCROLL_CONFIG = {
   // Total height of the scroll container in viewport units
-  containerHeightVh: 1500,
+  containerHeightVh: 1800,
   
   // The scroll threshold factor relative to window height
   thresholdFactor: 16.0, 
