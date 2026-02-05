@@ -24,15 +24,21 @@ const BarChartRace = ({
       const extractedYears = yearRow.slice(3).map(y => +y);
       setYears(extractedYears);
 
-      const cancerRows = rows.slice(2).filter(r => {
+      // Filter for all major death causes
+      // Identify rows where col 0 contains specific alphanumeric codes in parentheses
+      // and exclude "Re." (which often denote aggregates or remainders)
+      const causeRows = rows.slice(2).filter(r => {
         const label = r[0];
-        return label && label.includes("(C") && !label.includes("(C00-C97)");
+        // Typical codes: (A00), (C16), (I21), etc. 
+        // We want specific categories, avoiding the very broad ones if possible.
+        // Actually, let's include anything with a code but filter out explicit aggregate strings.
+        return label && label.includes("(") && !label.includes("Re.") && !label.includes("(C00-C97)") && !label.includes("(A00- B99)");
       });
 
-      const formatted = cancerRows.map(row => {
+      const formatted = causeRows.map(row => {
         const label = row[0].split("(")[0].trim(); 
         const values = row.slice(3).map(v => {
-            const num = +v.replace(/,/g, ''); 
+            const num = +v.replace(/,/g, '').replace(/-/g, '0'); 
             return isNaN(num) ? 0 : num;
         });
         return { label, values };
@@ -42,7 +48,7 @@ const BarChartRace = ({
 
       // Create stable color map with a large unique palette
       const allLabels = formatted.map(d => d.label);
-      const palette = [...d3.schemeTableau10, ...d3.schemePaired, ...d3.schemeSet3, ...d3.schemeCategory10];
+      const palette = [...d3.schemeTableau10, ...d3.schemePaired, ...d3.schemeSet3, ...d3.schemeCategory10, ...d3.schemeAccent];
       const scale = d3.scaleOrdinal(palette).domain(allLabels);
       const map = {};
       allLabels.forEach(l => map[l] = scale(l));
@@ -78,7 +84,7 @@ const BarChartRace = ({
         };
     })
     .sort((a, b) => b.value - a.value) 
-    .slice(0, 10); 
+    .slice(0, 12); // Slightly more bars for "all causes"
 
     // D3 Render Logic
     const svg = d3.select(svgRef.current);
@@ -119,7 +125,7 @@ const BarChartRace = ({
         .attr("dy", "0.35em")
         .attr("text-anchor", "end")
         .text(d => d.label)
-        .style("font-size", "12px")
+        .style("font-size", "11px") // Slightly smaller font for more bars
         .style("font-weight", "bold")
         .style("fill", "#e5e7eb"); 
 
@@ -132,7 +138,7 @@ const BarChartRace = ({
         .attr("y", (d, i) => y(i) + y.bandwidth() / 2)
         .attr("dy", "0.35em")
         .text(d => Math.round(d.value).toLocaleString())
-        .style("font-size", "12px")
+        .style("font-size", "11px")
         .style("fill", "#9ca3af"); 
 
     // Year Label
@@ -159,7 +165,7 @@ const BarChartRace = ({
   return (
     <div className="bg-panel-bg/80 backdrop-blur-md border border-panel-border rounded-xl p-6 shadow-2xl">
         <h3 className="text-xl font-bold text-text-main mb-4 flex justify-between items-center">
-            <span>Leading Causes of Cancer Death</span>
+            <span>Leading Causes of Death (Historical)</span>
             <span className="text-brand text-2xl font-mono">
                 {displayYearHeader}
             </span>
