@@ -1,37 +1,43 @@
 import React, { useMemo, useEffect, useRef } from 'react';
 import { useGLTF } from '@react-three/drei';
 import * as THREE from 'three';
+import { useTheme } from '../context/ThemeContext';
 
 const MODEL_URL = 'models/human.glb';
 
 export const PopulationGrid = ({ progress }) => {
   const { scene } = useGLTF(MODEL_URL);
+  const { theme } = useTheme();
   const meshRef = useRef();
   
-  // Extract geometry, material, and base orientation
-  const { geometry, material, baseQuaternion } = useMemo(() => {
-    let geom, mat, quat = new THREE.Quaternion();
+  const isDarkMode = theme === 'dark' || (theme === 'system' && window.matchMedia('(prefers-color-scheme: dark)').matches);
+  const materialColor = isDarkMode ? '#e2e8f0' : '#4e4849';
+
+  // Extract geometry, material, and base orientation/scale
+  const { geometry, material, baseQuaternion, baseScale } = useMemo(() => {
+    let geom, mat, quat = new THREE.Quaternion(), sca = new THREE.Vector3(1, 1, 1);
     if (scene) {
-        // Ensure world matrices are up to date before capturing orientation
+        // Ensure world matrices are up to date before capturing orientation/scale
         scene.updateMatrixWorld(true);
         scene.traverse((child) => {
         if ((child.isMesh || child.isSkinnedMesh) && !geom) {
             geom = child.geometry;
-            // Capture world orientation to account for any node rotations in the GLB
+            // Capture world orientation and scale to account for any node transforms in the GLB
             child.getWorldQuaternion(quat);
-            // Use a ghost-like material for the population
+            child.getWorldScale(sca);
+            // Match the main mesh color but keep ghost-like transparency
             mat = new THREE.MeshStandardMaterial({ 
-                color: '#64748b', // Slate-500
-                roughness: 0.5,
-                metalness: 0.5,
+                color: materialColor,
+                roughness: 0.3,
+                metalness: 0.2,
                 transparent: true, 
                 opacity: 0
             });
         }
         });
     }
-    return { geometry: geom, material: mat, baseQuaternion: quat };
-  }, [scene]);
+    return { geometry: geom, material: mat, baseQuaternion: quat, baseScale: sca };
+  }, [scene, materialColor]);
 
   // Generate Positions for 10x10 Grid
   const { dummy, positions } = useMemo(() => {
@@ -64,16 +70,21 @@ export const PopulationGrid = ({ progress }) => {
     
     // Scale logic: 
     // The grid items grow from 0 to 0.5 (base scale)
-    const baseScale = 0.5;
-    const currentScale = baseScale * progress;
+    const baseGridScale = 0.5;
+    const currentScale = baseGridScale * progress;
     
     // Update opacity based on progress
     // eslint-disable-next-line react-hooks/immutability
-    material.opacity = progress; 
+    material.opacity = progress * 0.6; // Slightly more transparent than hero
     
     positions.forEach((p, i) => {
         dummy.position.set(p.x, p.y, p.z);
-        dummy.scale.set(currentScale, currentScale, currentScale);
+        // Combine base grid scale with GLB native scale
+        dummy.scale.set(
+            currentScale * baseScale.x, 
+            currentScale * baseScale.y, 
+            currentScale * baseScale.z
+        );
         
         // Apply captured orientation
         dummy.quaternion.copy(baseQuaternion);
@@ -82,7 +93,7 @@ export const PopulationGrid = ({ progress }) => {
         meshRef.current.setMatrixAt(i, dummy.matrix);
     });
     meshRef.current.instanceMatrix.needsUpdate = true;
-  }, [progress, positions, dummy, geometry, material, baseQuaternion]);
+  }, [progress, positions, dummy, geometry, material, baseQuaternion, baseScale]);
 
   if (!geometry) return null;
 
