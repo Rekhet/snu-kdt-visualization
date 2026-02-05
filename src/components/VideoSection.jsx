@@ -2,7 +2,7 @@ import React, { useRef, useEffect, useState } from 'react';
 
 const VideoSection = ({ progress, src, visible }) => {
   const videoRef = useRef(null);
-  const [error, setError] = useState(null);
+  const [errorInfo, setErrorInfo] = useState(null);
   const [isReady, setIsReady] = useState(false);
 
   useEffect(() => {
@@ -10,11 +10,9 @@ const VideoSection = ({ progress, src, visible }) => {
     if (!video) return;
 
     if (visible) {
-      // Try playing if it's not already playing
       if (video.paused) {
         video.play().catch(err => {
-          console.error("Autoplay failed:", err);
-          // Don't show error to user yet, might be transient
+          console.warn("Autoplay attempt failed:", err);
         });
       }
     } else {
@@ -43,15 +41,27 @@ const VideoSection = ({ progress, src, visible }) => {
         loop
         playsInline
         autoPlay
+        preload="auto"
         onCanPlay={() => {
-            console.log("Video is ready to play");
+            console.log("Video can play");
             setIsReady(true);
-            setError(null);
+            setErrorInfo(null);
         }}
         onError={(e) => {
-            const errorMsg = `Video Error: ${videoRef.current?.error?.message || 'Unknown error'}`;
-            console.error(errorMsg, e);
-            setError(errorMsg);
+            const err = videoRef.current?.error;
+            let codeMsg = "Unknown";
+            if (err) {
+                switch(err.code) {
+                    case 1: codeMsg = "Aborted"; break;
+                    case 2: codeMsg = "Network Error"; break;
+                    case 3: codeMsg = "Decode Error"; break;
+                    case 4: codeMsg = "Source Not Supported / Not Found"; break;
+                    default: codeMsg = `Error Code: ${err.code}`;
+                }
+            }
+            const info = `${codeMsg} (${src})`;
+            console.error("Video element reported error:", info, e);
+            setErrorInfo(info);
         }}
         className="w-full h-full object-contain"
         style={{ 
@@ -64,18 +74,18 @@ const VideoSection = ({ progress, src, visible }) => {
       
       {/* Debug Info Overlay */}
       <div className="absolute top-10 left-1/2 -translate-x-1/2 flex flex-col items-center gap-2 pointer-events-auto">
-        {error && (
+        {errorInfo && (
             <div className="bg-red-600 text-white px-4 py-2 rounded text-xs font-bold shadow-lg">
-                {error} - Path: {src}
+                Video Failure: {errorInfo}
             </div>
         )}
-        {!error && !isReady && visible && (
+        {!errorInfo && !isReady && visible && (
             <div className="bg-brand text-text-inverse px-4 py-2 rounded text-xs font-bold animate-pulse shadow-lg">
-                Loading Video...
+                Requesting Video Asset...
             </div>
         )}
         <div className="text-white/20 text-[10px] font-mono uppercase tracking-widest">
-          {isReady ? 'Ready' : 'Not Ready'} | {src}
+          {isReady ? 'READY' : 'WAITING'} | {src}
         </div>
       </div>
     </div>
