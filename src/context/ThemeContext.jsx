@@ -1,43 +1,43 @@
-import React, { createContext, useContext, useState, useEffect } from 'react';
+import React, { createContext, useContext, useState, useEffect } from "react";
 
 const ThemeContext = createContext();
 
 export const ThemeProvider = ({ children }) => {
   const [theme, setTheme] = useState(() => {
-    return localStorage.getItem('theme') || 'system';
+    return localStorage.getItem("theme") || "system";
   });
 
   useEffect(() => {
     const root = window.document.documentElement;
-    const mediaQuery = window.matchMedia('(prefers-color-scheme: dark)');
+    const mediaQuery = window.matchMedia("(prefers-color-scheme: dark)");
 
     const applyTheme = () => {
-      if (theme === 'dark') {
-        root.classList.add('dark');
-      } else if (theme === 'light') {
-        root.classList.remove('dark');
+      if (theme === "dark") {
+        root.classList.add("dark");
+      } else if (theme === "light") {
+        root.classList.remove("dark");
       } else {
         // System preference
         if (mediaQuery.matches) {
-          root.classList.add('dark');
+          root.classList.add("dark");
         } else {
-          root.classList.remove('dark');
+          root.classList.remove("dark");
         }
       }
     };
 
     applyTheme();
-    localStorage.setItem('theme', theme);
+    localStorage.setItem("theme", theme);
 
     const handleSystemChange = (e) => {
-        if (theme === 'system') {
-            if (e.matches) root.classList.add('dark');
-            else root.classList.remove('dark');
-        }
+      if (theme === "system") {
+        if (e.matches) root.classList.add("dark");
+        else root.classList.remove("dark");
+      }
     };
 
-    mediaQuery.addEventListener('change', handleSystemChange);
-    return () => mediaQuery.removeEventListener('change', handleSystemChange);
+    mediaQuery.addEventListener("change", handleSystemChange);
+    return () => mediaQuery.removeEventListener("change", handleSystemChange);
   }, [theme]);
 
   return (

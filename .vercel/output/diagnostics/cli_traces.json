@@ -1,1 +1,46 @@
-[{"name":"vc.builder","duration":4026761,"timestamp":32732131815,"id":"ba4098a4-c2b8-4c79-949c-82a046333f06","parentId":"aca234c7-02f7-48b8-90e6-01bca607ddf4","tags":{"name":"@vercel/static-build"},"startTime":1770276980336},{"name":"vc.builder.diagnostics","duration":12,"timestamp":32736158647,"id":"ea748eef-2f65-4740-a173-fdc19828b589","parentId":"ba4098a4-c2b8-4c79-949c-82a046333f06","tags":{},"startTime":1770276984362},{"name":"vc.builder.writeBuildResult","duration":1257,"timestamp":32736158687,"id":"ff17ea90-aab1-4520-8f93-498e94f761ec","parentId":"ba4098a4-c2b8-4c79-949c-82a046333f06","tags":{"buildOutputLength":"1"},"startTime":1770276984363},{"name":"vc.doBuild","duration":4156883,"timestamp":32732053987,"id":"aca234c7-02f7-48b8-90e6-01bca607ddf4","parentId":"5c6c62a2-43c3-475d-afd6-e8452a5fa03d","tags":{},"startTime":1770276980258},{"name":"vc","duration":4169496,"timestamp":32732041381,"id":"5c6c62a2-43c3-475d-afd6-e8452a5fa03d","tags":{},"startTime":1770276980245}]
+[
+  {
+    "name": "vc.builder",
+    "duration": 3195765,
+    "timestamp": 33459804651,
+    "id": "4e430f46-d325-42a1-bcd6-8ec97417ad91",
+    "parentId": "955bdd6b-2e7a-45cc-8daf-47f479845d21",
+    "tags": { "name": "@vercel/static-build" },
+    "startTime": 1770277708016
+  },
+  {
+    "name": "vc.builder.diagnostics",
+    "duration": 12,
+    "timestamp": 33463000453,
+    "id": "f77d95ca-6b31-4e77-a75b-17314d9deafa",
+    "parentId": "4e430f46-d325-42a1-bcd6-8ec97417ad91",
+    "tags": {},
+    "startTime": 1770277711212
+  },
+  {
+    "name": "vc.builder.writeBuildResult",
+    "duration": 1128,
+    "timestamp": 33463000490,
+    "id": "791e4ce9-4071-4723-b952-84da342f10c6",
+    "parentId": "4e430f46-d325-42a1-bcd6-8ec97417ad91",
+    "tags": { "buildOutputLength": "1" },
+    "startTime": 1770277711212
+  },
+  {
+    "name": "vc.doBuild",
+    "duration": 3391716,
+    "timestamp": 33459654411,
+    "id": "955bdd6b-2e7a-45cc-8daf-47f479845d21",
+    "parentId": "a78d4c82-c64e-4470-b743-99a8dcfbe81e",
+    "tags": {},
+    "startTime": 1770277707866
+  },
+  {
+    "name": "vc",
+    "duration": 3422892,
+    "timestamp": 33459623241,
+    "id": "a78d4c82-c64e-4470-b743-99a8dcfbe81e",
+    "tags": {},
+    "startTime": 1770277707835
+  }
+]

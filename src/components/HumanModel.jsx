@@ -1,22 +1,22 @@
-import React, { useState, useEffect } from 'react';
-import { useCursor, useGLTF } from '@react-three/drei';
-import * as THREE from 'three';
-import { useTheme } from '../context/ThemeContext';
+import React, { useState, useEffect } from "react";
+import { useCursor, useGLTF } from "@react-three/drei";
+import * as THREE from "three";
+import { useTheme } from "../context/ThemeContext";
 
 // URL to local model
-const MODEL_URL = 'models/human.glb';
+const MODEL_URL = "models/human.glb";
 
 // --- Reusable Hitbox Component ---
-const Hitbox = ({ 
-  id, 
-  geometry, 
-  position, 
-  rotation = [0, 0, 0], 
-  scale = [1, 1, 1], 
+const Hitbox = ({
+  id,
+  geometry,
+  position,
+  rotation = [0, 0, 0],
+  scale = [1, 1, 1],
   onSelect,
-  onDoubleClick, 
+  onDoubleClick,
   setHovered,
-  debug = false 
+  debug = false,
 }) => {
   return (
     <mesh
@@ -44,10 +44,10 @@ const Hitbox = ({
     >
       {geometry}
       {/* Mesh is always visible to stay raycastable, but opacity is 0 when not in debug/mesh mode */}
-      <meshBasicMaterial 
-        color="#ff0000" 
-        wireframe={true} 
-        visible={true} 
+      <meshBasicMaterial
+        color="#ff0000"
+        wireframe={true}
+        visible={true}
         transparent={true}
         opacity={debug ? 0.5 : 0}
       />
@@ -55,11 +55,20 @@ const Hitbox = ({
   );
 };
 
-const HumanModel = ({ onPartSelect, onPartDoubleClick, showWireframe, onHoverChange, prevalenceValue = null }) => {
+const HumanModel = ({
+  onPartSelect,
+  onPartDoubleClick,
+  showWireframe,
+  onHoverChange,
+  prevalenceValue = null,
+}) => {
   const [hovered, setHovered] = useState(null);
   const { theme } = useTheme();
-  
-  const isDarkMode = theme === 'dark' || (theme === 'system' && window.matchMedia('(prefers-color-scheme: dark)').matches);
+
+  const isDarkMode =
+    theme === "dark" ||
+    (theme === "system" &&
+      window.matchMedia("(prefers-color-scheme: dark)").matches);
 
   useCursor(!!hovered);
 
@@ -71,23 +80,23 @@ const HumanModel = ({ onPartSelect, onPartDoubleClick, showWireframe, onHoverCha
 
   // Load the external model
   const { scene } = useGLTF(MODEL_URL);
-  
+
   // Clone the scene so we can modify materials without affecting cache
   const modelScene = React.useMemo(() => {
     if (!scene) return null;
-    
+
     const cloned = scene.clone();
-    
+
     // Determine color based on prevalenceValue (if in grid mode)
     // The hero mesh is at Row 4, Col 5 in the 10x10 grid.
-    // In the new "front-to-back" fill order (Row 9 first), 
+    // In the new "front-to-back" fill order (Row 9 first),
     // fillOrderIndex = (9 - row) * 10 + col = (9 - 4) * 10 + 5 = 55.
-    let materialColor = isDarkMode ? '#e2e8f0' : '#4e4849';
+    let materialColor = isDarkMode ? "#e2e8f0" : "#4e4849";
     if (prevalenceValue !== null) {
-        const affectedCount = Math.round(prevalenceValue / 1000);
-        if (55 < affectedCount) {
-            materialColor = 'crimson'; // Match "Affected" color in grid
-        }
+      const affectedCount = Math.round(prevalenceValue / 1000);
+      if (55 < affectedCount) {
+        materialColor = "crimson"; // Match "Affected" color in grid
+      }
     }
 
     // Apply "Glass" material to the human mesh
@@ -95,7 +104,7 @@ const HumanModel = ({ onPartSelect, onPartDoubleClick, showWireframe, onHoverCha
       if (child.isMesh || child.isSkinnedMesh) {
         // Adjust material for better visibility on light background
         child.material = new THREE.MeshPhysicalMaterial({
-          color: materialColor, 
+          color: materialColor,
           transmission: 0.6,
           opacity: 0.8,
           transparent: true,
@@ -103,7 +112,7 @@ const HumanModel = ({ onPartSelect, onPartDoubleClick, showWireframe, onHoverCha
           metalness: 0.1,
           thickness: 1.0,
           ior: 1.5,
-          side: THREE.DoubleSide
+          side: THREE.DoubleSide,
         });
         child.castShadow = true;
         child.receiveShadow = true;
@@ -119,32 +128,26 @@ const HumanModel = ({ onPartSelect, onPartDoubleClick, showWireframe, onHoverCha
     onSelect: onPartSelect,
     onDoubleClick: onPartDoubleClick,
     setHovered,
-    debug: showWireframe
+    debug: showWireframe,
   };
 
   return (
     <group dispose={null}>
-      
       {/* --- MASTER GROUP --- 
           We apply the User's scale/pos/rot HERE so children move together 
       */}
-      <group 
-        position={[0, 0.7, 0]} 
-        scale={[0.5, 0.5, 0.5]} 
+      <group
+        position={[0, 0.7, 0]}
+        scale={[0.5, 0.5, 0.5]}
         rotation={[0, 0, 0]}
       >
-        
         {/* 1. The Model (Local transforms reset) */}
-        {modelScene && (
-          <primitive 
-            object={modelScene} 
-          />
-        )}
+        {modelScene && <primitive object={modelScene} />}
 
         {/* 2. Hitboxes (Attached to the model's space) 
             Adjust the 'position' of these to match the model parts.
         */}
-        
+
         {/* Example: Head */}
         <Hitbox
           id="head"
@@ -152,7 +155,7 @@ const HumanModel = ({ onPartSelect, onPartDoubleClick, showWireframe, onHoverCha
           position={[0, 4.2, 0]}
           geometry={<sphereGeometry args={[0.32, 20, 20]} />}
         />
-        
+
         {/* Neck (Linked to Head) */}
         <Hitbox
           id="head"
@@ -168,7 +171,6 @@ const HumanModel = ({ onPartSelect, onPartDoubleClick, showWireframe, onHoverCha
           position={[0, 3.1, -0.05]}
           geometry={<cylinderGeometry args={[0.36, 0.3, 1.4, 32]} />}
         />
-
       </group>
     </group>
   );

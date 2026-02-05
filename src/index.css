@@ -12,10 +12,10 @@
     --color-panel-bg: #ffffff; /* white */
     --color-panel-bg-translucent: rgba(255, 255, 255, 0.9);
     --color-panel-border: #e5e7eb; /* gray-200 */
-    
+
     --color-input-bg: #f3f4f6; /* gray-100 */
     --color-surface-hover: #f3f4f6; /* gray-100 */
-    
+
     --color-text-main: #111827; /* gray-900 */
     --color-text-muted: #6b7280; /* gray-500 */
     --color-text-inverse: #ffffff;
@@ -32,10 +32,10 @@
 
     --color-input-bg: #374151; /* gray-700 */
     --color-surface-hover: #374151; /* gray-700 */
-    
+
     --color-text-main: #f9fafb; /* gray-50 */
     --color-text-muted: #9ca3af; /* gray-400 */
-    
+
     --color-nav-bg: rgba(31, 41, 55, 0.5); /* translucent gray-800 */
   }
 }
@@ -53,7 +53,7 @@
   --color-panel-bg: var(--color-panel-bg);
   --color-panel-bg-blur: var(--color-panel-bg-translucent);
   --color-panel-border: var(--color-panel-border);
-  
+
   --color-input-bg: var(--color-input-bg);
   --color-surface-hover: var(--color-surface-hover);
 
@@ -71,8 +71,10 @@ body {
   color: var(--color-text-main);
   font-family: var(--font-body);
   overflow-x: hidden;
-  overflow-y: auto; 
-  transition: background-color 0.2s ease, color 0.2s ease;
+  overflow-y: auto;
+  transition:
+    background-color 0.2s ease,
+    color 0.2s ease;
 }
 
 /* Custom Scrollbar - Hover to reveal */
@@ -96,7 +98,11 @@ body:hover ::-webkit-scrollbar-thumb {
 
 /* Darken thumb when explicitly hovering over the scrollbar area */
 ::-webkit-scrollbar-thumb:hover {
-  background: color-mix(in srgb, var(--color-text-muted), transparent 40%) !important;
+  background: color-mix(
+    in srgb,
+    var(--color-text-muted),
+    transparent 40%
+  ) !important;
 }
 
 #root {

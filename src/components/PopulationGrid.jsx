@@ -1,41 +1,52 @@
-import React, { useMemo, useEffect, useRef } from 'react';
-import { useGLTF } from '@react-three/drei';
-import * as THREE from 'three';
-import { useTheme } from '../context/ThemeContext';
+import React, { useMemo, useEffect, useRef } from "react";
+import { useGLTF } from "@react-three/drei";
+import * as THREE from "three";
+import { useTheme } from "../context/ThemeContext";
 
-const MODEL_URL = 'models/human.glb';
+const MODEL_URL = "models/human.glb";
 
 export const PopulationGrid = ({ progress, prevalenceValue = 0 }) => {
   const { scene } = useGLTF(MODEL_URL);
   const { theme } = useTheme();
   const meshRef = useRef();
-  
-  const isDarkMode = theme === 'dark' || (theme === 'system' && window.matchMedia('(prefers-color-scheme: dark)').matches);
-  const healthyColor = isDarkMode ? '#e2e8f0' : '#4e4849'; 
+
+  const isDarkMode =
+    theme === "dark" ||
+    (theme === "system" &&
+      window.matchMedia("(prefers-color-scheme: dark)").matches);
+  const healthyColor = isDarkMode ? "#e2e8f0" : "#4e4849";
 
   // Extract geometry, material, and base orientation/scale
   const { geometry, material, baseQuaternion, baseScale } = useMemo(() => {
-    let geom, mat, quat = new THREE.Quaternion(), sca = new THREE.Vector3(1, 1, 1);
+    let geom,
+      mat,
+      quat = new THREE.Quaternion(),
+      sca = new THREE.Vector3(1, 1, 1);
     if (scene) {
-        scene.updateMatrixWorld(true);
-        scene.traverse((child) => {
+      scene.updateMatrixWorld(true);
+      scene.traverse((child) => {
         if ((child.isMesh || child.isSkinnedMesh) && !geom) {
-            geom = child.geometry;
-            child.getWorldQuaternion(quat);
-            child.getWorldScale(sca);
-            
-            // Material must be white to allow instance colors to show correctly
-            mat = new THREE.MeshStandardMaterial({ 
-                color: '#ffffff', 
-                roughness: 0.3,
-                metalness: 0.2,
-                transparent: true, 
-                opacity: 0
-            });
+          geom = child.geometry;
+          child.getWorldQuaternion(quat);
+          child.getWorldScale(sca);
+
+          // Material must be white to allow instance colors to show correctly
+          mat = new THREE.MeshStandardMaterial({
+            color: "#ffffff",
+            roughness: 0.3,
+            metalness: 0.2,
+            transparent: true,
+            opacity: 0,
+          });
         }
-        });
+      });
     }
-    return { geometry: geom, material: mat, baseQuaternion: quat, baseScale: sca };
+    return {
+      geometry: geom,
+      material: mat,
+      baseQuaternion: quat,
+      baseScale: sca,
+    };
   }, [scene]);
 
   // Generate Positions for 10x10 Grid
@@ -44,19 +55,19 @@ export const PopulationGrid = ({ progress, prevalenceValue = 0 }) => {
     const pos = [];
     const count = 100;
     const cols = 10;
-    const spacing = 1.5; 
+    const spacing = 1.5;
 
     for (let i = 0; i < count; i++) {
-        if (i === 45) continue; 
+      if (i === 45) continue;
 
-        const row = Math.floor(i / cols);
-        const col = i % cols;
-        
-        pos.push({
-            x: (col - 4.5) * spacing,
-            z: (row - 4.5) * spacing,
-            y: -0.3 
-        });
+      const row = Math.floor(i / cols);
+      const col = i % cols;
+
+      pos.push({
+        x: (col - 4.5) * spacing,
+        z: (row - 4.5) * spacing,
+        y: -0.3,
+      });
     }
     return { dummy, positions: pos };
   }, []);
@@ -64,58 +75,63 @@ export const PopulationGrid = ({ progress, prevalenceValue = 0 }) => {
   // Update Instances
   useEffect(() => {
     if (!meshRef.current || !geometry || !material) return;
-    
+
     const baseGridScale = 0.5;
     const currentScale = baseGridScale * progress;
-    
+
     // eslint-disable-next-line react-hooks/immutability
-    material.opacity = progress * 0.6; 
-    
+    material.opacity = progress * 0.6;
+
     const normalColor = new THREE.Color(healthyColor);
-    const affectedColor = new THREE.Color('crimson'); // Crimson for prevalence
-    
+    const affectedColor = new THREE.Color("crimson"); // Crimson for prevalence
+
     // 1 mesh = 1%. prevalenceValue is per 100,000.
     // So 1000 per 100k = 1%.
     const affectedCount = Math.round(prevalenceValue / 1000);
 
     positions.forEach((p, i) => {
-        dummy.position.set(p.x, p.y, p.z);
-        dummy.scale.set(
-            currentScale * baseScale.x, 
-            currentScale * baseScale.y, 
-            currentScale * baseScale.z
-        );
-        dummy.quaternion.copy(baseQuaternion);
-        dummy.updateMatrix();
-        meshRef.current.setMatrixAt(i, dummy.matrix);
+      dummy.position.set(p.x, p.y, p.z);
+      dummy.scale.set(
+        currentScale * baseScale.x,
+        currentScale * baseScale.y,
+        currentScale * baseScale.z,
+      );
+      dummy.quaternion.copy(baseQuaternion);
+      dummy.updateMatrix();
+      meshRef.current.setMatrixAt(i, dummy.matrix);
 
-        // Color Logic: Start filling from the front row (closest to camera)
-        // Row 0 is back, Row 9 is front. So we fill Row 9, then 8, etc.
-        let gridIndex = i;
-        if (i >= 45) gridIndex = i + 1; // Map back to 0-99 grid index
+      // Color Logic: Start filling from the front row (closest to camera)
+      // Row 0 is back, Row 9 is front. So we fill Row 9, then 8, etc.
+      let gridIndex = i;
+      if (i >= 45) gridIndex = i + 1; // Map back to 0-99 grid index
 
-        const row = Math.floor(gridIndex / 10);
-        const col = gridIndex % 10;
-        const fillOrderIndex = (9 - row) * 10 + col;
+      const row = Math.floor(gridIndex / 10);
+      const col = gridIndex % 10;
+      const fillOrderIndex = (9 - row) * 10 + col;
 
-        if (fillOrderIndex < affectedCount) {
-            meshRef.current.setColorAt(i, affectedColor);
-        } else {
-            meshRef.current.setColorAt(i, normalColor);
-        }
+      if (fillOrderIndex < affectedCount) {
+        meshRef.current.setColorAt(i, affectedColor);
+      } else {
+        meshRef.current.setColorAt(i, normalColor);
+      }
     });
-    
+
     meshRef.current.instanceMatrix.needsUpdate = true;
-    if (meshRef.current.instanceColor) meshRef.current.instanceColor.needsUpdate = true;
-    
-  }, [progress, positions, dummy, geometry, material, baseQuaternion, baseScale, healthyColor, prevalenceValue]);
+    if (meshRef.current.instanceColor)
+      meshRef.current.instanceColor.needsUpdate = true;
+  }, [
+    progress,
+    positions,
+    dummy,
+    geometry,
+    material,
+    baseQuaternion,
+    baseScale,
+    healthyColor,
+    prevalenceValue,
+  ]);
 
   if (!geometry) return null;
 
-  return (
-    <instancedMesh 
-        ref={meshRef} 
-        args={[geometry, material, 99]} 
-    />
-  );
+  return <instancedMesh ref={meshRef} args={[geometry, material, 99]} />;
 };

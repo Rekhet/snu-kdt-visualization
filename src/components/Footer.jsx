@@ -1,4 +1,4 @@
-import React from 'react';
+import React from "react";
 
 export default function Footer() {
   return (
@@ -7,12 +7,16 @@ export default function Footer() {
         &copy; {new Date().getFullYear()} SNUKDT Project. All rights reserved.
       </div>
       <div className="flex items-center gap-4">
-         <span className="flex items-center gap-1">
-            <span className="w-2 h-2 rounded-full bg-success"></span>
-            System Operational
-         </span>
-         <a href="#" className="hover:text-text-main">Privacy Policy</a>
-         <a href="#" className="hover:text-text-main">Terms of Service</a>
+        <span className="flex items-center gap-1">
+          <span className="w-2 h-2 rounded-full bg-success"></span>
+          System Operational
+        </span>
+        <a href="#" className="hover:text-text-main">
+          Privacy Policy
+        </a>
+        <a href="#" className="hover:text-text-main">
+          Terms of Service
+        </a>
       </div>
     </footer>
   );
