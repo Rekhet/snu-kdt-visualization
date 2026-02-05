@@ -9,23 +9,25 @@ const CONFIG = {
   easing: (t) => 1 - Math.pow(1 - t, 4), // EaseOutQuart
 };
 
-const NavigationControls = ({ cameraControls, onReset, isInteracting }) => {
+  const NavigationControls = ({ cameraControls, onReset, isInteracting }) => {
   const animFrameRef = useRef();
 
   if (!cameraControls) return null;
 
   const handleMove = (x, y) => {
+    if (!isInteracting && onReset) onReset();
     // Truck: x (left/right), y (up/down)
     cameraControls.truck(x * CONFIG.moveSpeed, y * CONFIG.moveSpeed, true);
   };
 
   const handleRotate = (angleDirection) => {
+    if (!isInteracting && onReset) onReset();
     // Cancel any ongoing rotation
     if (animFrameRef.current) cancelAnimationFrame(animFrameRef.current);
 
     // Rotation parameters
     const targetAngle = -angleDirection * CONFIG.rotationAngle;
-    const startTime = performance.now();
+    let startTime = null;
 
     // Capture start state
     const startPos = new THREE.Vector3();
@@ -34,6 +36,7 @@ const NavigationControls = ({ cameraControls, onReset, isInteracting }) => {
     cameraControls.getTarget(startTarget);
 
     const animate = (currentTime) => {
+      if (!startTime) startTime = currentTime;
       const elapsed = currentTime - startTime;
       let progress = elapsed / CONFIG.animationDuration;
 
@@ -70,12 +73,13 @@ const NavigationControls = ({ cameraControls, onReset, isInteracting }) => {
   };
 
   const handleZoom = (delta) => {
+    if (!isInteracting && onReset) onReset();
     const speed = 1.0;
     cameraControls.dolly(delta * speed, true);
   };
 
   const btnClass = "bg-panel-bg-blur hover:bg-panel-bg text-text-main p-2 rounded-lg shadow-lg backdrop-blur-sm transition-all active:scale-95 border border-panel-border flex items-center justify-center w-10 h-10 sm:w-11 sm:h-11 cursor-pointer";
-  const containerClass = "bg-nav-bg p-2 rounded-xl backdrop-blur-sm border border-panel-border shadow-sm";
+  const containerClass = "bg-nav-bg p-2 rounded-xl backdrop-blur-sm border border-panel-border shadow-sm pointer-events-auto";
   const iconClass = "w-5 h-5 sm:w-6 sm:h-6";
 
   return (

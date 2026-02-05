@@ -120,12 +120,6 @@ const CameraHandler = ({ isLocked, selectedId, zoomLevel, resetTrigger, onContro
   const controlsRef = useRef();
   const { scene, camera } = useThree();
 
-  useEffect(() => {
-    if (controlsRef.current && onControlReady) {
-      onControlReady(controlsRef.current);
-    }
-  }, [onControlReady]);
-
   // Sync controls state when locking (Entering interaction mode)
   useEffect(() => {
     if (controlsRef.current) {
@@ -162,7 +156,12 @@ const CameraHandler = ({ isLocked, selectedId, zoomLevel, resetTrigger, onContro
 
   return (
     <CameraControls 
-      ref={controlsRef} 
+      ref={(node) => {
+        if (node) {
+          controlsRef.current = node;
+          if (onControlReady) onControlReady(node);
+        }
+      }} 
       enabled={isLocked}
       minDistance={0.5} 
       maxDistance={15}
@@ -349,22 +348,6 @@ export default function Home({
                     onControlReady={setCameraControls}
                   />
                 </Canvas>
-
-                {/* UI Elements - Fade in when locked (Single View Only) */}
-                <div className={`absolute inset-0 transition-opacity duration-500 pointer-events-none ${showUI ? 'opacity-100' : 'opacity-0'}`}>
-                     <Overlay 
-                        selectedId={selectedId} 
-                        onSelect={handleSelectWrapper} 
-                        onReset={handleToggleInteraction} 
-                        showWireframe={showWireframe}
-                        hoveredPart={hoveredPart}
-                     />
-                     <NavigationControls 
-                        cameraControls={cameraControls} 
-                        onReset={handleToggleInteraction} 
-                        isInteracting={interactionMode}
-                     />
-                </div>
             </div>
 
             {/* Floating button helps user get to the zone where interaction is possible. 
@@ -379,6 +362,24 @@ export default function Home({
                 If I pass `interactionMode || isInScrollZone` as `isLocked` to the button, it will hide when in zone.
             */}
             <FloatingScrollButton isLocked={isButtonHidden} />
+
+            {/* Interaction UI Overlay (Single View only) */}
+            <div 
+                className={`fixed inset-0 pointer-events-none transition-opacity duration-500 z-40 ${showUI ? 'opacity-100' : 'opacity-0'}`}
+            >
+                 <Overlay 
+                    selectedId={selectedId} 
+                    onSelect={handleSelectWrapper} 
+                    onReset={handleToggleInteraction} 
+                    showWireframe={showWireframe}
+                    hoveredPart={hoveredPart}
+                 />
+                 <NavigationControls 
+                    cameraControls={cameraControls} 
+                    onReset={handleToggleInteraction} 
+                    isInteracting={interactionMode}
+                 />
+            </div>
 
             {/* Chart Race Section Overlay */}
             <div 
