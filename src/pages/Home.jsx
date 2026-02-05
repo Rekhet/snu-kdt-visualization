@@ -9,6 +9,7 @@ import BarChartRace from '../components/BarChartRace';
 import VideoSection from '../components/VideoSection';
 import { PopulationGrid } from '../components/PopulationGrid';
 import { survivalTimeSeries } from '../data/survivalTimeSeries';
+import videoSrc from '../assets/front-video.mp4';
 import * as THREE from 'three';
 import { useTheme } from '../context/ThemeContext';
 import { SCROLL_CONFIG, getPhaseProgress } from '../config/scrollConfig';
@@ -375,7 +376,7 @@ export default function Home({
             {/* Video Intro Section */}
             <VideoSection 
                 progress={videoProgress} 
-                src="/data/front-video.mp4" 
+                src={videoSrc} 
                 visible={progress >= SCROLL_CONFIG.phases.EVENT_VIDEO_INTRO.start && progress <= SCROLL_CONFIG.phases.EVENT_VIDEO_INTRO.end}
             />
 
