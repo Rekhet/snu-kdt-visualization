@@ -81,8 +81,9 @@ The scroll-based animation system is centrally configured in `src/config/scrollC
 
 ### Scroll Event Points
 The experience is divided into distinct "Event Points" based on scroll progress (0.0 - 1.0):
-1. **EVENT_TITLE** (0.0 - 0.1): Intro title fades out.
-2. **EVENT_CHART_RACE** (0.15 - 0.45): Independent historical chart race section.
-3. **EVENT_MODEL_REVEAL** (0.5 - 0.65): 3D Body model appears and scales up.
-4. **EVENT_MODEL_INTERACT** (0.65 - 0.85): Model is interactive (zoom/rotate/select).
-5. **EVENT_GRID_EXPAND** (0.9 - 1.0): Transition to population grid view.
+1. **EVENT_TITLE** (0.0 - 0.05): Intro title fades out.
+2. **EVENT_VIDEO_INTRO** (0.08 - 0.25): Full-screen introductory video (`front-video.mp4`).
+3. **EVENT_CHART_RACE** (0.3 - 0.6): Independent historical chart race section.
+4. **EVENT_MODEL_REVEAL** (0.62 - 0.75): 3D Body model appears and scales up.
+5. **EVENT_MODEL_INTERACT** (0.75 - 0.9): Model is interactive (zoom/rotate/select).
+6. **EVENT_GRID_EXPAND** (0.92 - 1.0): Transition to population grid view.

@@ -2,11 +2,9 @@
 
 export const SCROLL_CONFIG = {
   // Total height of the scroll container in viewport units
-  // Increased to 2000vh to ensure animation progress reaches 1.0 with a healthy buffer
-  containerHeightVh: 2000,
+  containerHeightVh: 2500,
   
   // The scroll threshold factor relative to window height
-  // 16.0 means animation reaches 1.0 at 16 * viewport_height pixels
   thresholdFactor: 16.0, 
 
   // Animation Phases (Event Points)
@@ -14,37 +12,42 @@ export const SCROLL_CONFIG = {
     // Event 1: Intro Title
     EVENT_TITLE: {
       start: 0,
-      end: 0.06, 
+      end: 0.05, 
+    },
+
+    // Event 2: Intro Video Section
+    EVENT_VIDEO_INTRO: {
+      start: 0.08,
+      end: 0.25,
     },
     
-    // Event 2: Historical Chart Race (Independent Section)
+    // Event 3: Historical Chart Race (Independent Section)
     EVENT_CHART_RACE: {
-      start: 0.1,
-      end: 0.5,
+      start: 0.3,
+      end: 0.6,
     },
 
-    // Event 3: Body Model Appearance
-    // Start slightly early (0.48) for a smooth cross-fade with the chart
+    // Event 4: Body Model Appearance
     EVENT_MODEL_REVEAL: {
-      start: 0.48,
-      end: 0.65,
+      start: 0.62,
+      end: 0.75,
     },
 
-    // Event 4: Interactive Model View
+    // Event 5: Interactive Model View
     EVENT_MODEL_INTERACT: {
-      start: 0.65,
-      end: 0.85,
+      start: 0.75,
+      end: 0.9,
     },
 
-    // Event 5: Population Grid View
+    // Event 6: Population Grid View
     EVENT_GRID_EXPAND: {
-      start: 0.9,
+      start: 0.92,
       end: 1.0,
     },
     
     // Interaction trigger (synced with EVENT_MODEL_INTERACT)
-    interactionStart: 0.65,
-    interactionEnd: 0.85,
+    interactionStart: 0.75,
+    interactionEnd: 0.9,
   },
 
   // Easing functions
