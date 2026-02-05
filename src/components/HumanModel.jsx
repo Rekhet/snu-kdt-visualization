@@ -55,15 +55,9 @@ const Hitbox = ({
   );
 };
 
-const HumanModel = ({ onPartSelect, onPartDoubleClick, showWireframe, onHoverChange }) => {
+const HumanModel = ({ onPartSelect, onPartDoubleClick, showWireframe, onHoverChange, survivalRate = null }) => {
   const [hovered, setHovered] = useState(null);
   const { theme } = useTheme();
-  
-  // Resolve actual theme (since 'system' needs resolution, but for now we simplify)
-  // If theme is 'system', we ideally check media query, but let's assume 'dark' class on HTML is truth.
-  // Actually, useTheme handles the class. We can check if document has 'dark' class or just map 'dark' -> light color.
-  // A cleaner way is to use a state that tracks the resolved mode, but let's just use the `theme` string 
-  // and maybe check window matchMedia if 'system'.
   
   const isDarkMode = theme === 'dark' || (theme === 'system' && window.matchMedia('(prefers-color-scheme: dark)').matches);
 
@@ -83,7 +77,17 @@ const HumanModel = ({ onPartSelect, onPartDoubleClick, showWireframe, onHoverCha
     if (!scene) return null;
     
     const cloned = scene.clone();
-    const materialColor = isDarkMode ? '#e2e8f0' : '#4e4849'; // Slate-200 (Light) vs Dark Grey
+    
+    // Determine color based on survivalRate (if in grid mode)
+    // The hero mesh is index 45 in the 10x10 grid.
+    // If survivalRate is 70, deadCount is 30. Hero (45) is Alive.
+    let materialColor = isDarkMode ? '#e2e8f0' : '#4e4849';
+    if (survivalRate !== null) {
+        const deadCount = 100 - Math.round(survivalRate);
+        if (45 < deadCount) {
+            materialColor = '#333333'; // Match "Dead" color in grid
+        }
+    }
 
     // Apply "Glass" material to the human mesh
     cloned.traverse((child) => {
@@ -107,7 +111,7 @@ const HumanModel = ({ onPartSelect, onPartDoubleClick, showWireframe, onHoverCha
       }
     });
     return cloned;
-  }, [scene, isDarkMode]);
+  }, [scene, isDarkMode, survivalRate]);
 
   // Shared props for hitboxes
   const boxProps = {

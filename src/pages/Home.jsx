@@ -331,6 +331,9 @@ export default function Home({
                             onPartDoubleClick={(id) => { if(showUI) handlePartDoubleClick(id); }}
                             showWireframe={showWireframe}
                             onHoverChange={setHoveredPart}
+                            survivalRate={gridProgress > 0 ? (
+                                survivalTimeSeries.data[selectedCancer]?.values[survivalTimeSeries.years.indexOf(selectedYear)] || 100
+                            ) : null}
                           />
                       </Suspense>
                     </ErrorBoundary>
