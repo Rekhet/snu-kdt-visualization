@@ -1,6 +1,7 @@
 import React, { useState, useEffect } from 'react';
 import { useCursor, useGLTF } from '@react-three/drei';
 import * as THREE from 'three';
+import { useTheme } from '../context/ThemeContext';
 
 // URL to local model
 const MODEL_URL = 'models/human.glb';
@@ -56,7 +57,16 @@ const Hitbox = ({
 
 const HumanModel = ({ onPartSelect, onPartDoubleClick, showWireframe, onHoverChange }) => {
   const [hovered, setHovered] = useState(null);
+  const { theme } = useTheme();
   
+  // Resolve actual theme (since 'system' needs resolution, but for now we simplify)
+  // If theme is 'system', we ideally check media query, but let's assume 'dark' class on HTML is truth.
+  // Actually, useTheme handles the class. We can check if document has 'dark' class or just map 'dark' -> light color.
+  // A cleaner way is to use a state that tracks the resolved mode, but let's just use the `theme` string 
+  // and maybe check window matchMedia if 'system'.
+  
+  const isDarkMode = theme === 'dark' || (theme === 'system' && window.matchMedia('(prefers-color-scheme: dark)').matches);
+
   useCursor(!!hovered);
 
   useEffect(() => {
@@ -69,35 +79,35 @@ const HumanModel = ({ onPartSelect, onPartDoubleClick, showWireframe, onHoverCha
   const { scene } = useGLTF(MODEL_URL);
   
   // Clone the scene so we can modify materials without affecting cache
-  const [modelScene, setModelScene] = useState(null);
+  const modelScene = React.useMemo(() => {
+    if (!scene) return null;
+    
+    const cloned = scene.clone();
+    const materialColor = isDarkMode ? '#e2e8f0' : '#4e4849'; // Slate-200 (Light) vs Dark Grey
 
-  useEffect(() => {
-    if (scene) {
-      const cloned = scene.clone();
-      // Apply "Glass" material to the human mesh
-      cloned.traverse((child) => {
-        if (child.isMesh || child.isSkinnedMesh) {
-          // Adjust material for better visibility on light background
-          child.material = new THREE.MeshPhysicalMaterial({
-            color: '#4e4849', //'#3b82f6', // Stronger Blue
-            transmission: 0.6,
-            opacity: 0.8,
-            transparent: true,
-            roughness: 0.2,
-            metalness: 0.1,
-            thickness: 1.0,
-            ior: 1.5,
-            side: THREE.DoubleSide
-          });
-          child.castShadow = true;
-          child.receiveShadow = true;
-          // Disable raycasting on the visual model so it doesn't block hitboxes
-          child.raycast = () => null;
-        }
-      });
-      setModelScene(cloned);
-    }
-  }, [scene]);
+    // Apply "Glass" material to the human mesh
+    cloned.traverse((child) => {
+      if (child.isMesh || child.isSkinnedMesh) {
+        // Adjust material for better visibility on light background
+        child.material = new THREE.MeshPhysicalMaterial({
+          color: materialColor, 
+          transmission: 0.6,
+          opacity: 0.8,
+          transparent: true,
+          roughness: 0.2,
+          metalness: 0.1,
+          thickness: 1.0,
+          ior: 1.5,
+          side: THREE.DoubleSide
+        });
+        child.castShadow = true;
+        child.receiveShadow = true;
+        // Disable raycasting on the visual model so it doesn't block hitboxes
+        child.raycast = () => null;
+      }
+    });
+    return cloned;
+  }, [scene, isDarkMode]);
 
   // Shared props for hitboxes
   const boxProps = {

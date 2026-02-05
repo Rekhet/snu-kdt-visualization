@@ -2,140 +2,150 @@ export const bodyPartsData = [
   { 
     id: 'head', 
     label: 'Head & Neck', 
-    type: 'surface', 
-    description: 'The superior part of the human body, including the neck, containing the brain, eyes, ears, nose, and mouth.',
-    diseases: ['Migraine', 'Tension Headache', 'Alopecia Areata', 'Concussion', 'Sinusitis', 'Cervical Spondylosis'],
-    details: ['brain', 'eyes']
+    type: 'region', 
+    description: 'The head and neck region, site of various malignancies including brain tumors and carcinomas of the upper aerodigestive tract.',
+    diseases: ['Glioblastoma', 'Nasopharyngeal Carcinoma', 'Oral Squamous Cell Carcinoma', 'Laryngeal Cancer'],
+    details: ['brain', 'thyroid']
   },
   { 
     id: 'brain', 
     label: 'Brain', 
     type: 'organ', 
-    description: 'The central organ of the human nervous system.',
-    diseases: ['Alzheimer’s Disease', 'Epilepsy', 'Stroke', 'Parkinson’s Disease', 'Meningitis']
+    description: 'The central control center. Primary brain tumors differ from metastatic tumors that spread from other body parts.',
+    diseases: ['Glioblastoma Multiforme', 'Astrocytoma', 'Meningioma', 'Metastatic Brain Tumors']
   },
   { 
-    id: 'eyes', 
-    label: 'Eyes', 
+    id: 'thyroid', 
+    label: 'Thyroid', 
     type: 'organ', 
-    description: 'Organs of the visual system.',
-    diseases: ['Cataract', 'Glaucoma', 'Macular Degeneration']
+    description: 'A butterfly-shaped gland in the neck. Thyroid cancer is the most common endocrine cancer.',
+    diseases: ['Papillary Thyroid Carcinoma', 'Follicular Thyroid Carcinoma', 'Medullary Thyroid Cancer', 'Anaplastic Thyroid Cancer']
   },
   { 
     id: 'torso', 
-    label: 'Torso', 
-    type: 'surface', 
-    description: 'The central part of the body, to which the head and limbs are attached.',
-    diseases: ['Shingles', 'Melanoma', 'Psoriasis'],
-    details: ['heart', 'lungs', 'liver', 'stomach', 'intestines']
-  },
-  { 
-    id: 'heart', 
-    label: 'Heart', 
-    type: 'organ', 
-    description: 'A muscular organ that pumps blood through the blood vessels of the circulatory system.',
-    diseases: ['Coronary Artery Disease', 'Arrhythmia', 'Myocardial Infarction', 'Heart Failure']
+    label: 'Torso (Chest & Abdomen)', 
+    type: 'region', 
+    description: 'The central body region housing vital organs often targeted by carcinomas and adenocarcinomas.',
+    diseases: ['Breast Cancer', 'Melanoma', 'Soft Tissue Sarcoma'],
+    details: ['lungs', 'breast', 'liver', 'stomach', 'pancreas', 'kidney', 'intestines', 'prostate', 'ovaries']
   },
   { 
     id: 'lungs', 
     label: 'Lungs', 
     type: 'organ', 
-    description: 'Primary organs of the respiratory system.',
-    diseases: ['Pneumonia', 'Asthma', 'COPD', 'Lung Cancer', 'Tuberculosis']
+    description: 'Spongy, air-filled organs. Lung cancer is the leading cause of cancer death worldwide.',
+    diseases: ['Non-Small Cell Lung Cancer (NSCLC)', 'Small Cell Lung Cancer (SCLC)', 'Mesothelioma', 'Carcinoid Tumors']
+  },
+  { 
+    id: 'breast', 
+    label: 'Breast', 
+    type: 'organ', 
+    description: 'Glandular tissue producing milk. Breast cancer is the most common cancer in women.',
+    diseases: ['Invasive Ductal Carcinoma', 'Invasive Lobular Carcinoma', 'Triple-Negative Breast Cancer', 'Inflammatory Breast Cancer']
   },
   { 
     id: 'liver', 
     label: 'Liver', 
     type: 'organ', 
-    description: 'Detoxifies chemicals and metabolizes drugs.',
-    diseases: ['Hepatitis', 'Cirrhosis', 'Liver Cancer', 'Fatty Liver Disease']
+    description: 'Largest internal organ. Primary liver cancer is distinct from liver metastases.',
+    diseases: ['Hepatocellular Carcinoma (HCC)', 'Cholangiocarcinoma (Bile Duct Cancer)', 'Hepatoblastoma']
   },
   { 
     id: 'stomach', 
     label: 'Stomach', 
     type: 'organ', 
-    description: 'A muscular, hollow organ in the gastrointestinal tract.',
-    diseases: ['Gastritis', 'Peptic Ulcer', 'GERD', 'Stomach Cancer']
+    description: 'Digestive organ. Gastric cancer often begins in the mucus-producing cells.',
+    diseases: ['Gastric Adenocarcinoma', 'Gastrointestinal Stromal Tumor (GIST)', 'Gastric Lymphoma']
+  },
+  { 
+    id: 'pancreas', 
+    label: 'Pancreas', 
+    type: 'organ', 
+    description: 'Gland behind the stomach. Pancreatic cancer is often detected late due to lack of early symptoms.',
+    diseases: ['Pancreatic Ductal Adenocarcinoma', 'Pancreatic Neuroendocrine Tumors (PNETs)']
+  },
+  { 
+    id: 'kidney', 
+    label: 'Kidneys', 
+    type: 'organ', 
+    description: 'Organs that filter blood. Kidney cancer usually originates in the lining of tubules.',
+    diseases: ['Renal Cell Carcinoma (RCC)', 'Wilms Tumor', 'Transitional Cell Carcinoma']
   },
   { 
     id: 'intestines', 
-    label: 'Intestines', 
+    label: 'Colorectal (Intestines)', 
     type: 'organ', 
-    description: 'Long, continuous tube running from the stomach to the anus.',
-    diseases: ['IBS', 'Crohn’s Disease', 'Colitis', 'Celiac Disease']
+    description: 'The colon and rectum. Colorectal cancer is the third most common cancer globally.',
+    diseases: ['Colorectal Adenocarcinoma', 'Carcinoid Tumors', 'Gastrointestinal Stromal Tumors']
+  },
+  { 
+    id: 'prostate', 
+    label: 'Prostate', 
+    type: 'organ', 
+    description: 'Reproductive gland in men. Prostate cancer is highly prevalent in older men.',
+    diseases: ['Prostate Adenocarcinoma', 'Small Cell Carcinoma']
+  },
+  { 
+    id: 'ovaries', 
+    label: 'Ovaries', 
+    type: 'organ', 
+    description: 'Reproductive glands in women. Ovarian cancer is often called the "silent killer".',
+    diseases: ['Epithelial Ovarian Cancer', 'Germ Cell Tumors', 'Stromal Tumors']
   },
   { 
     id: 'arm_l', 
     label: 'Left Arm', 
-    type: 'surface', 
-    description: 'Upper limb on the left side.',
-    diseases: ['Carpal Tunnel', 'Tennis Elbow', 'Fracture']
+    type: 'region', 
+    description: 'Upper limb. Common site for bone and soft tissue sarcomas and melanoma.',
+    diseases: ['Melanoma', 'Osteosarcoma', 'Ewing Sarcoma', 'Soft Tissue Sarcoma']
   },
   { 
     id: 'arm_r', 
     label: 'Right Arm', 
-    type: 'surface', 
-    description: 'Upper limb on the right side.',
-    diseases: ['Carpal Tunnel', 'Tennis Elbow', 'Fracture']
+    type: 'region', 
+    description: 'Upper limb. Common site for bone and soft tissue sarcomas and melanoma.',
+    diseases: ['Melanoma', 'Osteosarcoma', 'Ewing Sarcoma', 'Soft Tissue Sarcoma']
   },
   { 
     id: 'leg_l', 
     label: 'Left Leg', 
-    type: 'surface', 
-    description: 'Lower limb on the left side.',
-    diseases: ['Deep Vein Thrombosis', 'Varicose Veins', 'ACL Tear'],
-    details: ['knee']
+    type: 'region', 
+    description: 'Lower limb. Common site for bone tumors (osteosarcoma) and soft tissue sarcomas.',
+    diseases: ['Osteosarcoma', 'Chondrosarcoma', 'Ewing Sarcoma', 'Melanoma']
   },
   { 
     id: 'leg_r', 
     label: 'Right Leg', 
-    type: 'surface', 
-    description: 'Lower limb on the right side.',
-    diseases: ['Deep Vein Thrombosis', 'Varicose Veins', 'ACL Tear'],
-    details: ['knee']
-  },
-  { 
-    id: 'knee', 
-    label: 'Knee', 
-    type: 'structure', 
-    description: 'Joint connecting the thigh and the lower leg.',
-    diseases: ['ACL Tear', 'Meniscus Tear', 'Arthritis']
+    type: 'region', 
+    description: 'Lower limb. Common site for bone tumors (osteosarcoma) and soft tissue sarcomas.',
+    diseases: ['Osteosarcoma', 'Chondrosarcoma', 'Ewing Sarcoma', 'Melanoma']
   },
   { 
     id: 'hand_l', 
     label: 'Left Hand', 
-    type: 'surface', 
-    description: 'The distal part of the left upper limb, used for grasping and manipulation.',
-    diseases: ['Arthritis', 'Carpal Tunnel Syndrome', 'Trigger Finger', 'Dupuytren’s Contracture'],
-    details: ['fingers']
+    type: 'region', 
+    description: 'Distal upper limb. Skin cancers (SCC, BCC) can occur on dorsal surfaces.',
+    diseases: ['Squamous Cell Carcinoma', 'Basal Cell Carcinoma', 'Melanoma']
   },
   { 
     id: 'hand_r', 
     label: 'Right Hand', 
-    type: 'surface', 
-    description: 'The distal part of the right upper limb, used for grasping and manipulation.',
-    diseases: ['Arthritis', 'Carpal Tunnel Syndrome', 'Trigger Finger', 'Dupuytren’s Contracture'],
-    details: ['fingers']
-  },
-  { 
-    id: 'fingers', 
-    label: 'Fingers', 
-    type: 'structure', 
-    description: 'Digits of the hand.',
-    diseases: ['Arthritis', 'Tendinitis', 'Dupuytren’s Contracture']
+    type: 'region', 
+    description: 'Distal upper limb. Skin cancers (SCC, BCC) can occur on dorsal surfaces.',
+    diseases: ['Squamous Cell Carcinoma', 'Basal Cell Carcinoma', 'Melanoma']
   },
   { 
     id: 'foot_l', 
     label: 'Left Foot', 
-    type: 'surface', 
-    description: 'The lower extremity of the left leg, bearing weight and allowing locomotion.',
-    diseases: ['Plantar Fasciitis', 'Gout', 'Athlete’s Foot', 'Bunions']
+    type: 'region', 
+    description: 'Distal lower limb. Acral lentiginous melanoma can occur on soles or under nails.',
+    diseases: ['Acral Lentiginous Melanoma', 'Kaposi Sarcoma']
   },
   { 
     id: 'foot_r', 
     label: 'Right Foot', 
-    type: 'surface', 
-    description: 'The lower extremity of the right leg, bearing weight and allowing locomotion.',
-    diseases: ['Plantar Fasciitis', 'Gout', 'Athlete’s Foot', 'Bunions']
+    type: 'region', 
+    description: 'Distal lower limb. Acral lentiginous melanoma can occur on soles or under nails.',
+    diseases: ['Acral Lentiginous Melanoma', 'Kaposi Sarcoma']
   },
 ];

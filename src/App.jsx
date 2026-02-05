@@ -5,6 +5,9 @@ import Footer from './components/Footer';
 import Home from './pages/Home';
 import Settings from './pages/Settings';
 import OrganDetail from './pages/OrganDetail';
+import Charts from './pages/Charts';
+import { PopupProvider } from './context/PopupContext';
+import GlobalPopup from './components/GlobalPopup';
 
 export default function App() {
   const [selectedId, setSelectedId] = useState(null);
@@ -39,36 +42,44 @@ export default function App() {
   };
 
   return (
-    <Router>
-        <div className="flex flex-col w-full h-full bg-gray-50 overflow-hidden">
-        
-        {/* Header */}
-        <Header onSearchSelect={handlePartSelect} />
+    <PopupProvider>
+        <Router>
+            <div className="flex flex-col min-h-screen w-full bg-app-bg text-text-main transition-colors duration-200">
+            
+            {/* Header */}
+            <div className="sticky top-0 z-[100]">
+                <Header onSearchSelect={handlePartSelect} />
+            </div>
 
-        <Routes>
-            <Route path="/" element={
-                <Home 
-                    selectedId={selectedId}
-                    onSelect={handlePartSelect}
-                    resetTrigger={resetTrigger}
-                    onReset={handleReset}
-                    zoomLevel={zoomLevel}
-                    setZoomLevel={setZoomLevel}
-                    showWireframe={showWireframe}
-                />
-            } />
-            <Route path="/settings" element={
-                <Settings 
-                    showWireframe={showWireframe}
-                    setShowWireframe={setShowWireframe}
-                />
-            } />
-            <Route path="/organ/:organId" element={<OrganDetail />} />
-        </Routes>
+            <Routes>
+                <Route path="/" element={
+                    <Home 
+                        selectedId={selectedId}
+                        onSelect={handlePartSelect}
+                        resetTrigger={resetTrigger}
+                        onReset={handleReset}
+                        zoomLevel={zoomLevel}
+                        setZoomLevel={setZoomLevel}
+                        showWireframe={showWireframe}
+                    />
+                } />
+                <Route path="/settings" element={
+                    <Settings 
+                        showWireframe={showWireframe}
+                        setShowWireframe={setShowWireframe}
+                    />
+                } />
+                <Route path="/organ/:organId" element={<OrganDetail />} />
+                <Route path="/charts" element={<Charts />} />
+            </Routes>
 
-        {/* Footer */}
-        <Footer />
-        </div>
-    </Router>
+            {/* Footer */}
+            <Footer />
+            
+            {/* Global Popup Layer */}
+            <GlobalPopup />
+            </div>
+        </Router>
+    </PopupProvider>
   );
 }

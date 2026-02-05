@@ -1,21 +1,37 @@
 # Disease 3D Visualization
 
-A high-performance, interactive 3D web application for visualizing disease data on a human model. Built with React, Three.js (via React Three Fiber), and Tailwind CSS.
+A high-performance, interactive 3D web application for visualizing disease data on a human model. Built with React, Three.js (via React Three Fiber), D3.js, and Tailwind CSS.
 
 ## Features
 
+### 3D Visualization & Interaction
+- **Scroll-Driven Storytelling**: Seamless transition from an intro hero section to a single interactive model, and finally to a population grid view.
 - **Interactive 3D Mannequin**: A translucent, glass-like human model with internal organs.
-- **Deep Zoom**: Double-click any body part (or select from search) to smoothly fly the camera to that specific region.
-- **360° Inspection**: Unrestricted camera rotation and zoom.
-- **Disease Data**: Overlay displaying common conditions associated with the selected organ/region.
-- **Search**: Real-time search to locate and highlight body parts.
+- **Deep Zoom & Focus**: Double-click any body part (or select from search) to smoothly fly the camera to that specific region.
+- **Navigation Controls**: On-screen directional pad, zoom, and reset controls for accessibility.
+- **Floating Navigation**: A smart floating button that guides users back to the interactive model view when scrolled away.
+
+### Data & Analytics
+- **Disease Data Overlay**: Context-sensitive information displaying common conditions associated with selected organs/regions.
+- **Interactive Charts**: A dedicated analytics dashboard featuring:
+    - Diverging Bar Charts (Gender comparison)
+    - Heatmaps (Age vs. Cancer Type)
+    - Line Charts (Trends over time)
+    - Pie Charts (Distribution)
+- **Search System**: Real-time search to locate, highlight, and zoom into specific body parts.
+
+### Customization & State
+- **Global Settings**: Toggle between Light/Dark themes and Wireframe/Solid model modes.
+- **Context Preservation**: State is managed via Context API (`PopupContext`, `ThemeContext`) and persisted where appropriate.
 
 ## Tech Stack
 
-- **Framework**: React + Vite
+- **Framework**: React 19 + Vite
 - **3D Engine**: Three.js, @react-three/fiber, @react-three/drei
-- **Styling**: Tailwind CSS
-- **Animations**: Framer Motion (UI), Maath/Spring (3D)
+- **Data Visualization**: D3.js
+- **Styling**: Tailwind CSS 4
+- **Routing**: React Router DOM 7
+- **Animations**: Custom scroll physics, Framer Motion (UI)
 
 ## Usage
 
@@ -36,7 +52,30 @@ A high-performance, interactive 3D web application for visualizing disease data 
 
 ## Project Structure
 
-- `src/components/HumanModel.jsx`: The procedural 3D geometry of the body.
-- `src/components/Overlay.jsx`: The 2D UI layer (Search, Info Card).
-- `src/data/bodyParts.js`: Database of body parts and disease info.
-- `src/App.jsx`: Main scene configuration and state management.
+```
+src/
+├── components/          # Reusable UI and 3D components
+│   ├── FloatingScrollButton.jsx  # Smart navigation button
+│   ├── HumanModel.jsx            # The 3D Human Mesh
+│   ├── PopulationGrid.jsx        # Instanced mesh grid for data view
+│   ├── NavigationControls.jsx    # Camera control UI
+│   ├── Overlay.jsx               # 2D Info & Search Overlay
+│   ├── ... (Charts: Line, Pie, Heatmap, DivergingBar)
+├── config/
+│   └── scrollConfig.js  # Configuration for scroll-based animation phases
+├── context/             # Global state (Theme, Popups)
+├── data/                # Static data assets (cancer stats, body parts)
+├── pages/               # Route views
+│   ├── Home.jsx         # Main 3D scroll experience
+│   ├── Charts.jsx       # D3 Visualization Dashboard
+│   ├── OrganDetail.jsx  # Specific organ deep-dive
+│   └── Settings.jsx     # App configuration
+└── App.jsx              # Main entry & Routing setup
+```
+
+## Configuration
+
+The scroll-based animation system is centrally configured in `src/config/scrollConfig.js`. You can adjust:
+- `containerHeightVh`: Total scrollable height.
+- `phases`: Start/End points for Title, Model Reveal, Interaction Lock, and Grid Expansion.
+- `thresholdFactor`: Sensitivity of scroll-to-animation mapping.
