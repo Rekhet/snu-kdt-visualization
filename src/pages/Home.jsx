@@ -312,7 +312,7 @@ export default function Home({
             </div>
 
             {/* Sticky 3D Canvas - Aligned below header */}
-            <div className={`sticky top-16 h-[calc(100vh-4rem)] w-full overflow-hidden transition-all duration-300 ${showUI ? 'pointer-events-auto' : 'pointer-events-none'}`}>
+            <div className={`sticky top-16 h-[calc(100vh-4rem)] w-full overflow-hidden transition-all duration-300 z-10 ${showUI ? 'pointer-events-auto' : 'pointer-events-none'}`}>
                 <Canvas
                   shadows
                   dpr={[1, 2]} 
@@ -376,7 +376,7 @@ export default function Home({
             <VideoSection 
                 progress={videoProgress} 
                 src="/data/front-video.mp4" 
-                visible={videoProgress > 0 && videoProgress <= 1}
+                visible={progress >= SCROLL_CONFIG.phases.EVENT_VIDEO_INTRO.start && progress <= SCROLL_CONFIG.phases.EVENT_VIDEO_INTRO.end}
             />
 
             {/* Grid Visualization Controls */}
@@ -471,7 +471,10 @@ export default function Home({
                 className={`fixed top-16 h-[calc(100vh-4rem)] w-full inset-x-0 pointer-events-none flex items-center justify-center z-30 transition-opacity duration-300`}
             >
                 <div className="pointer-events-auto">
-                    <BarChartRace progress={chartProgress} visible={chartProgress > 0 && chartProgress < 1} />
+                    <BarChartRace 
+                        progress={chartProgress} 
+                        visible={progress >= SCROLL_CONFIG.phases.EVENT_CHART_RACE.start && progress <= SCROLL_CONFIG.phases.EVENT_CHART_RACE.end} 
+                    />
                 </div>
             </div>
 

@@ -22,9 +22,9 @@ const VideoSection = ({ progress, src, visible }) => {
   }, [visible]);
 
   // Smoother fade logic based on the 0-1 progress of this specific phase
-  const opacity = progress > 0 && progress < 0.1 
+  const opacity = progress < 0.1 
     ? progress * 10 
-    : progress > 0.9 && progress < 1 
+    : progress > 0.9 
     ? (1 - progress) * 10 
     : 1;
 
@@ -32,9 +32,9 @@ const VideoSection = ({ progress, src, visible }) => {
     <div 
       className={`fixed inset-0 flex items-center justify-center bg-black transition-opacity duration-500 pointer-events-none`}
       style={{ 
-        opacity: visible ? opacity : 0,
-        zIndex: 45, // High z-index to stay above canvas and most overlays
-        visibility: visible || opacity > 0.01 ? 'visible' : 'hidden'
+        opacity: visible ? Math.max(0, Math.min(1, opacity)) : 0,
+        zIndex: 45, 
+        visibility: (visible && opacity > 0.01) ? 'visible' : 'hidden'
       }}
     >
       <video
