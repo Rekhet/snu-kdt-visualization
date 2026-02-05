@@ -8,15 +8,17 @@ export const PopulationGrid = ({ progress }) => {
   const { scene } = useGLTF(MODEL_URL);
   const meshRef = useRef();
   
-  // Extract geometry, material, and base rotation
-  const { geometry, material, baseRotation } = useMemo(() => {
-    let geom, mat, rot = new THREE.Euler();
+  // Extract geometry, material, and base orientation
+  const { geometry, material, baseQuaternion } = useMemo(() => {
+    let geom, mat, quat = new THREE.Quaternion();
     if (scene) {
+        // Ensure world matrices are up to date before capturing orientation
+        scene.updateMatrixWorld(true);
         scene.traverse((child) => {
         if ((child.isMesh || child.isSkinnedMesh) && !geom) {
             geom = child.geometry;
-            // Capture original rotation to maintain orientation in instancedMesh
-            rot.copy(child.rotation);
+            // Capture world orientation to account for any node rotations in the GLB
+            child.getWorldQuaternion(quat);
             // Use a ghost-like material for the population
             mat = new THREE.MeshStandardMaterial({ 
                 color: '#64748b', // Slate-500
@@ -28,7 +30,7 @@ export const PopulationGrid = ({ progress }) => {
         }
         });
     }
-    return { geometry: geom, material: mat, baseRotation: rot };
+    return { geometry: geom, material: mat, baseQuaternion: quat };
   }, [scene]);
 
   // Generate Positions for 10x10 Grid
@@ -50,7 +52,7 @@ export const PopulationGrid = ({ progress }) => {
         pos.push({
             x: (col - 4.5) * spacing,
             z: (row - 4.5) * spacing,
-            y: -1 // Floor level
+            y: -0.3 // Floor level (-1) + HumanModel internal offset (0.7)
         });
     }
     return { dummy, positions: pos };
@@ -73,15 +75,14 @@ export const PopulationGrid = ({ progress }) => {
         dummy.position.set(p.x, p.y, p.z);
         dummy.scale.set(currentScale, currentScale, currentScale);
         
-        // Apply base rotation from model plus any additional orientation
-        dummy.rotation.copy(baseRotation);
-        dummy.rotation.y += 0; // Maintain forward facing
+        // Apply captured orientation
+        dummy.quaternion.copy(baseQuaternion);
         
         dummy.updateMatrix();
         meshRef.current.setMatrixAt(i, dummy.matrix);
     });
     meshRef.current.instanceMatrix.needsUpdate = true;
-  }, [progress, positions, dummy, geometry, material, baseRotation]);
+  }, [progress, positions, dummy, geometry, material, baseQuaternion]);
 
   if (!geometry) return null;
 

@@ -40,9 +40,10 @@ const BarChartRace = ({
       
       setData(formatted);
 
-      // Create stable color map
+      // Create stable color map with a large unique palette
       const allLabels = formatted.map(d => d.label);
-      const scale = d3.scaleOrdinal(d3.schemeTableau10).domain(allLabels);
+      const palette = [...d3.schemeTableau10, ...d3.schemePaired, ...d3.schemeSet3, ...d3.schemeCategory10];
+      const scale = d3.scaleOrdinal(palette).domain(allLabels);
       const map = {};
       allLabels.forEach(l => map[l] = scale(l));
       setColorMap(map);
