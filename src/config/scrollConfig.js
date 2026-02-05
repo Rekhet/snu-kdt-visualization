@@ -2,7 +2,7 @@
 
 export const SCROLL_CONFIG = {
   // Total height of the scroll container in viewport units
-  containerHeightVh: 2500,
+  containerHeightVh: 1500,
   
   // The scroll threshold factor relative to window height
   thresholdFactor: 16.0, 
@@ -12,42 +12,35 @@ export const SCROLL_CONFIG = {
     // Event 1: Intro Title
     EVENT_TITLE: {
       start: 0,
-      end: 0.05, 
-    },
-
-    // Event 2: Intro Video Section
-    // Starts immediately after title to prevent "dead zone"
-    EVENT_VIDEO_INTRO: {
-      start: 0.05,
-      end: 0.28,
+      end: 0.1, 
     },
     
-    // Event 3: Historical Chart Race (Independent Section)
+    // Event 2: Historical Chart Race (Independent Section)
     EVENT_CHART_RACE: {
-      start: 0.3,
-      end: 0.6,
+      start: 0.15,
+      end: 0.5,
     },
 
-    // Event 4: Body Model Appearance
+    // Event 3: Body Model Appearance
     EVENT_MODEL_REVEAL: {
-      start: 0.62,
-      end: 0.75,
+      start: 0.55,
+      end: 0.7,
     },
 
-    // Event 5: Interactive Model View
+    // Event 4: Interactive Model View
     EVENT_MODEL_INTERACT: {
-      start: 0.75,
+      start: 0.7,
       end: 0.9,
     },
 
-    // Event 6: Population Grid View
+    // Event 5: Population Grid View
     EVENT_GRID_EXPAND: {
       start: 0.92,
       end: 1.0,
     },
     
     // Interaction trigger (synced with EVENT_MODEL_INTERACT)
-    interactionStart: 0.75,
+    interactionStart: 0.7,
     interactionEnd: 0.9,
   },
 

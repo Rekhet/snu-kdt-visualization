@@ -6,10 +6,8 @@ import Overlay from '../components/Overlay';
 import NavigationControls from '../components/NavigationControls';
 import FloatingScrollButton from '../components/FloatingScrollButton';
 import BarChartRace from '../components/BarChartRace';
-import VideoSection from '../components/VideoSection';
 import { PopulationGrid } from '../components/PopulationGrid';
 import { survivalTimeSeries } from '../data/survivalTimeSeries';
-import videoSrc from '../assets/front-video.mp4';
 import * as THREE from 'three';
 import { useTheme } from '../context/ThemeContext';
 import { SCROLL_CONFIG, getPhaseProgress } from '../config/scrollConfig';
@@ -202,7 +200,6 @@ export default function Home({
   const [titleOpacity, setTitleOpacity] = useState(1);
   const [gridProgress, setGridProgress] = useState(0);
   const [chartProgress, setChartProgress] = useState(0);
-  const [videoProgress, setVideoProgress] = useState(0);
   const [progress, setProgress] = useState(0);
   
   const [selectedYear, setSelectedYear] = useState(2007);
@@ -259,10 +256,6 @@ export default function Home({
       
       const fadeProgress = getPhaseProgress(currentProgress, SCROLL_CONFIG.phases.EVENT_TITLE);
       setTitleOpacity(1 - fadeProgress);
-
-      // Video Intro Progress
-      const videoP = getPhaseProgress(currentProgress, SCROLL_CONFIG.phases.EVENT_VIDEO_INTRO);
-      setVideoProgress(videoP);
 
       // Chart Race Progress
       const chartP = getPhaseProgress(currentProgress, SCROLL_CONFIG.phases.EVENT_CHART_RACE);
@@ -372,13 +365,6 @@ export default function Home({
 
             {/* Floating button helps user get to the zone where interaction is possible. */}
             <FloatingScrollButton isLocked={isButtonHidden} />
-
-            {/* Video Intro Section */}
-            <VideoSection 
-                progress={videoProgress} 
-                src={videoSrc} 
-                visible={progress >= SCROLL_CONFIG.phases.EVENT_VIDEO_INTRO.start && progress <= SCROLL_CONFIG.phases.EVENT_VIDEO_INTRO.end}
-            />
 
             {/* Grid Visualization Controls */}
             <div className={`fixed top-1/2 -translate-y-1/2 left-8 z-50 transition-opacity duration-500 pointer-events-auto flex flex-col gap-6 bg-panel-bg/90 backdrop-blur-md p-6 rounded-2xl border border-panel-border shadow-xl w-64 ${gridProgress > 0.8 ? 'opacity-100' : 'opacity-0 pointer-events-none'}`}>
