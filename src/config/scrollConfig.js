@@ -2,47 +2,47 @@
 
 export const SCROLL_CONFIG = {
   // Total height of the scroll container in viewport units
-  // Increased to accommodate the new Chart Race phase
-  containerHeightVh: 600,
+  // Increased to accommodate distinct page sections
+  containerHeightVh: 700,
   
   // The scroll threshold factor relative to window height
-  thresholdFactor: 5.0, 
+  thresholdFactor: 6.0, 
 
-  // Animation Phases (values are normalized 0 to 1 of the scroll progress)
+  // Animation Phases (Event Points)
   phases: {
-    // Phase 1: Title Fade Out
-    title: {
+    // Event 1: Intro Title
+    EVENT_TITLE: {
       start: 0,
       end: 0.1, 
     },
     
-    // Phase 2: Chart Race (History First)
-    chartRace: {
+    // Event 2: Historical Chart Race (Independent Section)
+    EVENT_CHART_RACE: {
       start: 0.15,
-      end: 0.4,
+      end: 0.45,
     },
 
-    // Phase 3: Single Model Reveal (Scale 0 -> 1)
-    modelReveal: {
-      start: 0.45,
-      end: 0.6,
+    // Event 3: Body Model Appearance
+    EVENT_MODEL_REVEAL: {
+      start: 0.5,
+      end: 0.65,
     },
 
-    // Phase 4: Single Model Interactive (Locked/Paused zone)
-    singleView: {
-      start: 0.6,
-      end: 0.8,
+    // Event 4: Interactive Model View
+    EVENT_MODEL_INTERACT: {
+      start: 0.65,
+      end: 0.85,
     },
 
-    // Phase 5: Grid Expansion
-    gridReveal: {
-      start: 0.85,
+    // Event 5: Population Grid View
+    EVENT_GRID_EXPAND: {
+      start: 0.9,
       end: 1.0,
     },
     
-    // Interaction trigger (for single model)
-    interactionStart: 0.6,
-    interactionEnd: 0.8,
+    // Interaction trigger (synced with EVENT_MODEL_INTERACT)
+    interactionStart: 0.65,
+    interactionEnd: 0.85,
   },
 
   // Easing functions

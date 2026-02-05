@@ -77,5 +77,12 @@ src/
 
 The scroll-based animation system is centrally configured in `src/config/scrollConfig.js`. You can adjust:
 - `containerHeightVh`: Total scrollable height.
-- `phases`: Start/End points for Title, Model Reveal, Interaction Lock, and Grid Expansion.
 - `thresholdFactor`: Sensitivity of scroll-to-animation mapping.
+
+### Scroll Event Points
+The experience is divided into distinct "Event Points" based on scroll progress (0.0 - 1.0):
+1. **EVENT_TITLE** (0.0 - 0.1): Intro title fades out.
+2. **EVENT_CHART_RACE** (0.15 - 0.45): Independent historical chart race section.
+3. **EVENT_MODEL_REVEAL** (0.5 - 0.65): 3D Body model appears and scales up.
+4. **EVENT_MODEL_INTERACT** (0.65 - 0.85): Model is interactive (zoom/rotate/select).
+5. **EVENT_GRID_EXPAND** (0.9 - 1.0): Transition to population grid view.

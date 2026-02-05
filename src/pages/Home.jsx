@@ -56,14 +56,14 @@ const ScrollScene = ({ interactionMode, modelGroupRef, setGridProgress }) => {
     // 1. Title Fade (Handled in Home component)
 
     // 2. Model Reveal (0 -> 1 scale)
-    const revealP = getPhaseProgress(progress, SCROLL_CONFIG.phases.modelReveal);
+    const revealP = getPhaseProgress(progress, SCROLL_CONFIG.phases.EVENT_MODEL_REVEAL);
     const revealScale = SCROLL_CONFIG.easing.smoothOut(revealP);
 
     // 3. Single View Interaction Zone
     // (Handled in Home component via scroll listener to avoid R3F state loop)
     
     // 4. Grid Expansion
-    const gridP = getPhaseProgress(progress, SCROLL_CONFIG.phases.gridReveal);
+    const gridP = getPhaseProgress(progress, SCROLL_CONFIG.phases.EVENT_GRID_EXPAND);
     const gridEase = SCROLL_CONFIG.easing.easeInOut(gridP);
     
     // Update Grid Component
@@ -247,15 +247,15 @@ export default function Home({
       const threshold = window.innerHeight * SCROLL_CONFIG.thresholdFactor;
       const progress = Math.min(scrollY / threshold, 1);
       
-      const fadeProgress = getPhaseProgress(progress, SCROLL_CONFIG.phases.title);
+      const fadeProgress = getPhaseProgress(progress, SCROLL_CONFIG.phases.EVENT_TITLE);
       setTitleOpacity(1 - fadeProgress);
 
       // Chart Race Progress
-      const chartP = getPhaseProgress(progress, SCROLL_CONFIG.phases.chartRace);
+      const chartP = getPhaseProgress(progress, SCROLL_CONFIG.phases.EVENT_CHART_RACE);
       setChartProgress(chartP);
 
       // Check if we are in the Single View Zone (Moved from ScrollScene)
-      const inZone = progress > SCROLL_CONFIG.phases.singleView.start && progress < SCROLL_CONFIG.phases.singleView.end;
+      const inZone = progress > SCROLL_CONFIG.phases.EVENT_MODEL_INTERACT.start && progress < SCROLL_CONFIG.phases.EVENT_MODEL_INTERACT.end;
       setIsInScrollZone(inZone);
     };
     
