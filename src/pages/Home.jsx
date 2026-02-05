@@ -7,6 +7,7 @@ import NavigationControls from '../components/NavigationControls';
 import FloatingScrollButton from '../components/FloatingScrollButton';
 import BarChartRace from '../components/BarChartRace';
 import { PopulationGrid } from '../components/PopulationGrid';
+import { survivalTimeSeries } from '../data/survivalTimeSeries';
 import * as THREE from 'three';
 import { useTheme } from '../context/ThemeContext';
 import { SCROLL_CONFIG, getPhaseProgress } from '../config/scrollConfig';
@@ -201,6 +202,9 @@ export default function Home({
   const [chartProgress, setChartProgress] = useState(0);
   const [progress, setProgress] = useState(0);
   
+  const [selectedYear, setSelectedYear] = useState(2007);
+  const [selectedCancer, setSelectedCancer] = useState('stomach');
+
   const modelGroupRef = useRef();
   const { theme } = useTheme();
 
@@ -333,7 +337,12 @@ export default function Home({
                     <ContactShadows opacity={0.3} scale={10} blur={2.5} far={4} resolution={256} color="#000000" />
                   </group>
 
-                  <PopulationGrid progress={gridProgress} />
+                  <PopulationGrid 
+                    progress={gridProgress} 
+                    survivalRate={
+                        survivalTimeSeries.data[selectedCancer]?.values[survivalTimeSeries.years.indexOf(selectedYear)] || 100
+                    }
+                  />
 
                   <ScrollScene 
                     interactionMode={interactionMode} 
@@ -353,6 +362,64 @@ export default function Home({
 
             {/* Floating button helps user get to the zone where interaction is possible. */}
             <FloatingScrollButton isLocked={isButtonHidden} />
+
+            {/* Grid Visualization Controls */}
+            <div className={`fixed top-1/2 -translate-y-1/2 left-8 z-50 transition-opacity duration-500 pointer-events-auto flex flex-col gap-6 bg-panel-bg/90 backdrop-blur-md p-6 rounded-2xl border border-panel-border shadow-xl w-64 ${gridProgress > 0.8 ? 'opacity-100' : 'opacity-0 pointer-events-none'}`}>
+                <div>
+                    <h3 className="text-sm font-bold text-text-muted uppercase tracking-wider mb-3">Cancer Type</h3>
+                    <div className="relative">
+                        <select 
+                            value={selectedCancer}
+                            onChange={(e) => setSelectedCancer(e.target.value)}
+                            className="w-full appearance-none bg-input-bg border border-panel-border text-text-main rounded-lg px-4 py-2 text-sm focus:outline-none focus:border-brand transition-colors"
+                        >
+                            {Object.entries(survivalTimeSeries.data).map(([key, data]) => (
+                                <option key={key} value={key}>{data.label}</option>
+                            ))}
+                        </select>
+                        <div className="absolute inset-y-0 right-0 flex items-center px-2 pointer-events-none text-text-muted">
+                            <svg className="w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path strokeLinecap="round" strokeLinejoin="round" strokeWidth="2" d="M19 9l-7 7-7-7"></path></svg>
+                        </div>
+                    </div>
+                </div>
+
+                <div>
+                    <div className="flex justify-between items-center mb-3">
+                        <h3 className="text-sm font-bold text-text-muted uppercase tracking-wider">Year</h3>
+                        <span className="text-brand font-mono font-bold">{selectedYear}</span>
+                    </div>
+                    <input 
+                        type="range" 
+                        min={survivalTimeSeries.years[0]} 
+                        max={survivalTimeSeries.years[survivalTimeSeries.years.length - 1]} 
+                        step="1"
+                        value={selectedYear}
+                        onChange={(e) => setSelectedYear(Number(e.target.value))}
+                        className="w-full h-2 bg-input-bg rounded-lg appearance-none cursor-pointer accent-brand"
+                    />
+                    <div className="flex justify-between text-[10px] text-text-muted mt-1 font-mono">
+                        <span>{survivalTimeSeries.years[0]}</span>
+                        <span>{survivalTimeSeries.years[survivalTimeSeries.years.length - 1]}</span>
+                    </div>
+                </div>
+
+                <div className="border-t border-panel-border pt-4">
+                    <div className="flex justify-between items-end">
+                        <div>
+                            <p className="text-xs text-text-muted mb-1">5-Year Survival</p>
+                            <p className="text-3xl font-bold text-success">
+                                {survivalTimeSeries.data[selectedCancer]?.values[survivalTimeSeries.years.indexOf(selectedYear)]}%
+                            </p>
+                        </div>
+                        <div className="text-right">
+                            <p className="text-xs text-text-muted mb-1">Fatality</p>
+                            <p className="text-xl font-bold text-text-main">
+                                {(100 - (survivalTimeSeries.data[selectedCancer]?.values[survivalTimeSeries.years.indexOf(selectedYear)] || 0)).toFixed(1)}%
+                            </p>
+                        </div>
+                    </div>
+                </div>
+            </div>
 
             {/* Interaction UI Overlay (Single View only) - Aligned below header */}
             <div 
